@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pvc          # Nom du PVC a utilisé
+spec:
+  accessModes:
+    - ReadWriteOnce           # Mode d'accès au volume
+  resources:
+    requests:
+      storage: 200Mi            # Taille du volume demandé (200Mo)

@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vuejs-deployment     # Nom du déploiement
+spec:
+  replicas: 1                # Nombre de répliques (instances)
+  selector:
+    matchLabels:
+      app: vuejs             # Label pour sélectionner le bon pod
+  template:
+    metadata:
+      labels:
+        app: vuejs           # Label pour identifier le pod
+    spec:
+      containers:
+      - name: vuejs-container
+        image: registry.gitlab.com/username/vuejs:latest  # Image Docker de l'application Vue.js (remplacer par la tienne)
+        ports:
+        - containerPort: 80   # Le port exposé par le conteneur (nginx sert sur le port 80)

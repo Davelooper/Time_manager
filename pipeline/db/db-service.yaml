@@ -1,0 +1,14 @@
+# Permet d'exposer mon service de base de données PostgreSQL à l'extérieur du cluster Kubernetes
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-service
+spec:
+  selector:
+    app: postgres # Meme label que le deployment
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP  # ClusterIP signifie que ce service est interne au cluster

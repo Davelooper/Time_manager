@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment     # Nom du déploiement PostgreSQL
+spec:
+  replicas: 1                   # Une seule réplique (instance)
+  selector:
+    matchLabels:
+      app: postgres              # Label pour le pods
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres-container
+        image: postgres:11-alpine   # Image PostgreSQL
+        ports:
+        - containerPort: 5432        # Expose le port PostgreSQL
+        env:                        # Définition des variables d'environnement
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "postgres"
+        - name: POSTGRES_DB
+          value: "time_manager_dev"
+        volumeMounts:               # Monte un volume pour stocker les données
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-storage
+      volumes:                       # Volume persistant pour PostgreSQL
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: db-pvc    # Référence à la PVC (PersistentVolumeClaim)
