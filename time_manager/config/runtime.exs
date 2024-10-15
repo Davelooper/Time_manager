@@ -21,12 +21,12 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
-  database_url =
-    System.get_env("DATABASE_URL") ||
-      raise """
-      environment variable DATABASE_URL is missing.
-      For example: ecto://USER:PASS@HOST/DATABASE
-      """
+  database_url = "ecto://postgres:postgres@db/time_manager_prod"
+    # System.get_env("DATABASE_URL") ||
+    #   raise """
+    #   environment variable DATABASE_URL is missing.
+    #   For example: ecto://USER:PASS@HOST/DATABASE
+    #   """
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
@@ -42,13 +42,14 @@ if config_env() == :prod do
   # to check this value into version control, so we use an environment
   # variable instead.
   secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
+    "QwaH+0XnSp1qJGEAHWvVH3lu2AbxpH8UmkFQ7CiZNlkUhoKGGkHREOLNGmMV+0M3"
+    # System.get_env("SECRET_KEY_BASE") ||
+    #   raise """
+    #   environment variable SECRET_KEY_BASE is missing.
+    #   You can generate one by calling: mix phx.gen.secret
+    #   """
 
-  host = System.get_env("PHX_HOST") || "example.com"
+  host = System.get_env("PHX_HOST") || "localhost"
   port = String.to_integer(System.get_env("PORT") || "4000")
 
   config :time_manager, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")

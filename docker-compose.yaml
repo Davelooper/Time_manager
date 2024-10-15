@@ -1,7 +1,7 @@
 services:
   elixir:
     build: 
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       context: ./time_manager
     ports:
       - "4000:4000"

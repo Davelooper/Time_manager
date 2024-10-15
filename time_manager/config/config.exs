@@ -13,6 +13,7 @@ config :time_manager,
 
 # Configures the endpoint
 config :time_manager, TimeManagerWeb.Endpoint,
+  server: true,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
