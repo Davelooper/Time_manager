@@ -4,6 +4,7 @@ defmodule TimeManagerWeb.Endpoint do
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
+  plug CORSPlug
   @session_options [
     store: :cookie,
     key: "_time_manager_key",
@@ -50,4 +51,6 @@ defmodule TimeManagerWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug TimeManagerWeb.Router
+  plug CORSPlug, origin: ["*","http://localhost:8000"]
+
 end

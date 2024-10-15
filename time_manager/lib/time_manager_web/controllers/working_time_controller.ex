@@ -21,6 +21,11 @@ defmodule TimeManagerWeb.WorkingTimeController do
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/workingtimes/#{working_time}")
       |> render(:show, working_time: working_time)
+    else
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{errors: changeset.errors})
     end
   end
 
