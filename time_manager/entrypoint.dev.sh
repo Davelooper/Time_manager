@@ -1,5 +1,5 @@
 #!/bin/sh
-# set -e  # S'interrompre en cas d'erreur
+set -e  # S'interrompre en cas d'erreur
 
 # Docker entrypoint
 
@@ -22,14 +22,19 @@ until pg_isready -q -h "$POSTGRES_HOST" -p 5432 -U "$POSTGRES_USER"; do
   sleep 2
 done
 
-# Créer, migrer et seed la base de données si elle n'existe pas
+
+# Créer la base de données si elle n'existe pas
+export PGPASSWORD=$POSTGRES_PASSWORD  # Ajouter le mot de passe pour psql
 if [ -z "$(psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -At -c "\list" | grep "^$POSTGRES_DB$")" ]; then
   echo "La base de données $POSTGRES_DB n'existe pas. Création..."
   mix ecto.create
-  mix ecto.migrate
-  mix run priv/repo/seeds.exs
   echo "Base de données $POSTGRES_DB créée."
 fi
 
+# Exécuter les migrations, même si la base de données existe déjà
+echo "Exécution des migrations..."
+mix ecto.migrate
+
 # Démarrer le serveur Phoenix
+echo "Démarrage du serveur Phoenix..."
 exec mix phx.server
