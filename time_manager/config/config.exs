@@ -7,6 +7,11 @@
 # General application configuration
 import Config
 
+# config/config.exs
+config :phoenix, :json_library, Jason
+# Utilise simplement la clé de signature ici
+config :joken, default_signer: "skoqjdoiqj87656W6D89QDJN"
+
 config :time_manager,
   ecto_repos: [TimeManager.Repo],
   generators: [timestamp_type: :utc_datetime]

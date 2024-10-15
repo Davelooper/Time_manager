@@ -8,10 +8,10 @@ WORKDIR /time_manager
 # RUN mix deps.get
 
 # Rendre le script entrypoint.sh exécutable
-RUN chmod +x ./entrypoint.sh
+RUN chmod +x ./entrypoint.dev.sh
 
 # Installer les utilitaires PostgreSQL pour pg_isready (si nécessaire)
 RUN apk --no-cache add postgresql-client
 
 # Exécuter le script entrypoint.sh avec sh
-CMD ["sh", "./entrypoint.sh"]
+CMD ["sh", "./entrypoint.dev.sh"]
