@@ -1,9 +1,9 @@
 #!/bin/sh
-set -e  # S'interrompre en cas d'erreur
+# set -e  # S'interrompre en cas d'erreur
 
 # Docker entrypoint
 
-echo "Répertoire actuel : "
+echo "Répertoire actuel DEV: "
 ls  # Liste les fichiers du répertoire
 
 echo "Variables d'environnement:"
@@ -22,6 +22,7 @@ until pg_isready -q -h "$POSTGRES_HOST" -p 5432 -U "$POSTGRES_USER"; do
   sleep 2
 done
 
+exec mix ecto.reset
 
 # Créer la base de données si elle n'existe pas
 export PGPASSWORD=$POSTGRES_PASSWORD  # Ajouter le mot de passe pour psql
