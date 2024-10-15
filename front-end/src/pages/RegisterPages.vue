@@ -1,4 +1,9 @@
 <template>
+    <RouterLink to="/home">
+      <div class="w-10 m-4 absolute">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" viewBox="0 0 32 32"><path d="M32 15H3.41l8.29-8.29-1.41-1.42-10 10a1 1 0 0 0 0 1.41l10 10 1.41-1.41L3.41 17H32z" data-name="4-Arrow Left"/></svg>
+      </div>
+    </RouterLink>
     <div class="container mx-auto p-6 max-w-md form-batman">
             <img class="w-40 mx-auto" src="../assets/img/batman-character.png" alt="batman">
       <form v-if="status === 1" @submit.prevent="registerForm" class="shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -8,7 +13,7 @@
           <input
             type="text"
             id="name"
-            v-model="user.name"
+            v-model="user.username"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Votre nom"
           />
@@ -51,7 +56,7 @@
           <input
             type="text"
             id="name"
-            v-model="user.name"
+            v-model="user.username"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Votre nom"
           />
@@ -95,17 +100,11 @@
 
 <script setup lang="ts">
 import router from '@/router';
-import { getuserId } from '@/store/userStore';
+import { createUser } from '@/store/userStore';
 import { ref } from 'vue';
- interface User {
-    email: string;
-    name: string;
-    password: string;
+ 
 
-}
-// je me flingue si j'ai pas trouvé de soluce aux <any>
-const user = ref<User>({ email: '', name: '', password:'' });
-    let status = ref(1)
+let status = ref(1)
 
 function toggleStatus(){
     status.value = status.value === 1 ? 2 : 1;
@@ -114,23 +113,28 @@ function toggleStatus(){
 
 const loading = ref(false);
 
+interface User {
+    email: string;
+    username: string;
+    password: string;
+}
+const user = ref<User>({email: '', username: '', password:'' });
+   
+
 function loginForm() {
     console.log("LOGIN")
     router.push('/workingtimes');
 
 }
-function registerForm() {
-    console.log("REGISTER")
+async function registerForm() {
+  console.log("REGISTER");
+  try {
+    await createUser(user.value);
+    // Redirection vers la page /workingtimes après la création de l'utilisateur
     router.push('/workingtimes');
-
-}
-
-async function fetchUsers() {
-  loading.value = true;
-  const result = await getuserId(1);
-  loading.value = false;
-  console.log(result);
-  console.log(user.value);
+  } catch (error) {
+    console.error('Erreur lors de la création du compte:', error);
+  }
 }
 </script>
 

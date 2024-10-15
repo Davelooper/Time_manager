@@ -19,45 +19,62 @@ export function useUser() {
 }
 
 export interface User {
-    id: number;
-    name: string;
+    id?: number;
+    username: string;
     email: string;
     password: string;
-    role: Role;
+    role?: Role;
 }
 
-export function createUser(user: User): void {
-    axios.post('http://localhost:4000/api/users', user)
-        .then(response => {
-            (response.data);
-        })
-        .catch(error => {
-            console.error('Erreur lors de la création de l\'utilisateur:', error);
-            (null);
-        });
+export interface ManageUsers {
+    data: any;
+    id: number;
+    username: string;
+    email: string;
+    password: string;
 }
 
-
-export async function getuserId(iduser: number): Promise<User | null> {
-    return axios.get(`http://localhost:4000/api/users/${iduser}`)
-        .then(response => {
-            console.log('Données reçues:', response.data);
-            return response.data;
-        })
-        .catch(error => {
-            console.error('Erreur lors de la récupération de l\'utilisateur:', error);
-            return null;
-        });
-}
-export function manageUser(user: User,iduser:number): void {
-    axios.put(`http://localhost/api/users/${iduser}`, user)
-        .then(response => {
-            (response.data);
-        })
-        .catch(error => {
-            console.error('Erreur lors de la création de l\'utilisateur:', error);
-            (null);
-        });
+export function createUser(user: User): Promise<void> {
+    return axios.post('http://localhost:4000/api/users', {
+    user: {
+        email: user.email,
+        password: user.password,
+        username:user.username
+    }
+    })
+    .then(response => {
+      console.log('Utilisateur créé:', response.data);
+    })
+    .catch(error => {
+      console.error('Erreur lors de la création de l\'utilisateur:', error);
+      throw error;
+    });
+  }
+  
+  export async function getUserById(id: number): Promise<ManageUsers> {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/users/${id}`);
+      return response.data; // Renvoie les données de l'utilisateur
+    } catch (error) {
+      console.error("Error fetching user:", error);
+        throw error;
+    }
+  }
+export function updateUser(user: User,iduser:number): void {
+    axios.put(`http://localhost/api/users/${iduser}`,{
+        user: {
+        email: user.email,
+        password: user.password,
+        username:user.username ?? ''
+    }
+    })
+    .then(response => {
+      console.log('Utilisateur manager:', response.data);
+    })
+    .catch(error => {
+      console.error('Erreur lors de la création de l\'utilisateur:', error);
+      throw error;
+    }); 
 }
 export function deleteUser(idUser: number): void {
     axios.delete(`http://localhost/api/users/${idUser}`)

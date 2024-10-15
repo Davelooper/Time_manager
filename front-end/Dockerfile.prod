@@ -1,0 +1,5 @@
+FROM node:lts-alpine
+
+WORKDIR /front-end
+# EXPOSE 8000
+CMD ["sh", "./launchProd.sh"]

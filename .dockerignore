@@ -1,0 +1,16 @@
+# .dockerignore
+
+# Ignore Elixir build artifacts
+*/_build/
+*/deps/
+
+# Ignore node modules
+assets/node_modules/
+# Ignore other irrelevant files
+.git/
+.gitignore
+.vscode/
+.idea/
+test/
+spec/
+priv/static/

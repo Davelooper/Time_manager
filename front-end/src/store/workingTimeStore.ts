@@ -5,16 +5,23 @@ export interface WorkingTime {
     end: string;
 }
 
-export function createWorkingTime(WorkingTime: WorkingTime, iduser: number): void {
-    axios.post(`http://localhost:4000/api/workingtime/${iduser}`, WorkingTime)
-        .then(response => {
-            (response.data);
-        })
-        .catch(error => {
-            console.error('Erreur lors de la création du WorkingTime:', error);
-            (null);
-        });
-}
+export function createWorkingTime(idUser: number,workingtime: WorkingTime): Promise<void> {
+    return axios.post(`http://localhost:4000/api/workingtime/${idUser}`,
+        {
+        WorkingTime: {
+        id:idUser,
+        start: workingtime.start,
+        end: workingtime.end
+    }
+    })
+    .then(response => {
+      console.log('Utilisateur créé:', response.data);
+    })
+    .catch(error => {
+      console.error('Erreur lors de la création de l\'utilisateur:', error);
+      throw error;
+    });
+  }
 
 export function updateWorkingTime(WorkingTime: WorkingTime, iduser: number): void {
     axios.put(`http://localhost:4000/api/workingtime/${iduser}`, WorkingTime)

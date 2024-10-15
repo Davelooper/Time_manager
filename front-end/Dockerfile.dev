@@ -2,4 +2,4 @@ FROM node:lts-alpine
 
 WORKDIR /front-end
 
-CMD ["sh", "./launch.sh"]
+CMD ["sh", "./launchDev.sh"]

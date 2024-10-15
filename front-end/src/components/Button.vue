@@ -1,52 +1,71 @@
-
 <template>
-  <RouterLink :to="to" class="">
-  <div class="flex flex-row px-4" :style="[
-    type == 'outlined' ?{ 'border-width': '2px', 'border-color': color,'padding-top':'6px','padding-bottom':'6px'}  : {'background-color':color,'padding-top':'8px','padding-bottom':'8px'},
-    rounded ? {'border-radius':'8px'}:''
-    ]">
-    <p class="text-black text-lg" :style="[
-      textColor && {'color':textColor}
-    ]"> 
-      {{text}}
-    </p>
-     
-  </div>
+  <RouterLink :to="to">
+    <div
+      class="flex flex-row px-4"
+      :style="[computedStyles, roundedStyles]"
+    >
+      <p class="text-black text-lg" :style="textStyles">
+        {{ text }}
+      </p>
+    </div>
   </RouterLink>
 </template>
-<script>
-export default {
-  props: {
-    text:{
-      type:String,
-      required:true
-    },
-    type:{
-      type:String,
-      required:true
-    },
-    color:{
-      type:String,
-      required:true,
-      default:"#959595"
-    },
-    textColor:{
-      type:String,
-      required:false,
-      default:"#000000"
-    },
-    rounded:{
-      type:Boolean,
-      required:false,
-      default:false
-    },
-    to:{
-      type:String,
-      required:false,
-    }
-  }
-}
-</script>
-<style lang="ts">
 
-</style>
+<script>
+import { RouterLink } from 'vue-router';
+
+export default {
+  name: 'CustomButton',
+  components: {
+    RouterLink,
+  },
+  props: {
+    text: {
+      type: String,
+      required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
+    color: {
+      type: String,
+      default: '#959595',
+    },
+    textColor: {
+      type: String,
+      default: '#000000',
+    },
+    rounded: {
+      type: Boolean,
+      default: false,
+    },
+    to: {
+      type: String,
+      required: false,
+    },
+  },
+  computed: {
+    computedStyles() {
+      return this.type === 'outlined'
+        ? {
+            borderWidth: '2px',
+            borderColor: this.color,
+            paddingTop: '6px',
+            paddingBottom: '6px',
+          }
+        : {
+            backgroundColor: this.color,
+            paddingTop: '8px',
+            paddingBottom: '8px',
+          };
+    },
+    roundedStyles() {
+      return this.rounded ? { borderRadius: '8px' } : {};
+    },
+    textStyles() {
+      return { color: this.textColor };
+    },
+  },
+};
+</script>

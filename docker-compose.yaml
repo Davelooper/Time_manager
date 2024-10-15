@@ -32,9 +32,10 @@ services:
   vuejs:
     build: 
         context: ./front-end
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.prod
     ports:
-      - '8000:5173'
+      - '8000:8000'
+      - '8080:5173'
     volumes:
       - './front-end:/front-end'
       - /front-end/node_modules
