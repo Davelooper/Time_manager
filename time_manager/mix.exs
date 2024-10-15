@@ -53,11 +53,14 @@ defmodule TimeManager.MixProject do
        compile: false,
        depth: 1},
       {:swoosh, "~> 1.5"},
+      {:telemetry_metrics, "~> 1.0"},
+      {:telemetry_poller, "~> 1.0"},
       {:finch, "~> 0.13"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.4"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:cors_plug, "~> 3.0"}
     ]
   end
 
