@@ -41,3 +41,4 @@ services:
       - /front-end/node_modules
 volumes:
   pgdata:
+  
