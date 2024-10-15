@@ -1,0 +1,44 @@
+services:
+  elixir:
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./time_manager
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_DEV}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_DEV}
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB_DEV}
+      MIX_ENV: dev
+    volumes:
+      - './time_manager:/time_manager'
+      - '/time_manager/deps'
+      - '/time_manager/_build'
+
+  db:
+    image: 'postgres:11-alpine'
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_DEV}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_DEV}
+      POSTGRES_DB: ${POSTGRES_DB_DEV}
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+
+  vuejs:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile.dev
+    ports:
+      # - '8000:8000'
+      - '8000:5173'
+    volumes:
+      - './front-end:/front-end'
+      - /front-end/node_modules
+volumes:
+  pgdata:
