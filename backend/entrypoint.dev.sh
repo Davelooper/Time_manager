@@ -13,6 +13,9 @@ echo "POSTGRES_PASSWORD: $POSTGRES_PASSWORD"
 echo "POSTGRES_HOST: $POSTGRES_HOST"
 echo "POSTGRES_DB: $POSTGRES_DB"
 
+echo "Utilisateur actuel : $(whoami)"
+ls -l ./config
+
 # Recuperer les dependances
 mix deps.get
 
@@ -26,13 +29,13 @@ done
 # exec mix ecto.reset
 
 echo "La base de données $POSTGRES_DB n'existe pas. Création..."
-exec mix ecto.create
+mix ecto.create
 echo "Base de données $POSTGRES_DB créée."
 
 # Exécuter les migrations, même si la base de données existe déjà
 echo "Exécution des migrations..."
-exec mix ecto.migrate
+mix ecto.migrate
 
 # Démarrer le serveur Phoenix
 echo "Démarrage du serveur Phoenix..."
-exec mix phx.server
+mix phx.server
