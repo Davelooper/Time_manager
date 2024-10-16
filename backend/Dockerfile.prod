@@ -25,7 +25,7 @@ COPY . .
 ENV MIX_ENV="prod"
 
 # Install production dependencies
-RUN mix deps.get --only prod
+RUN mix deps.get
 
 # Compile assets (CSS/JS)
 RUN mix assets.deploy

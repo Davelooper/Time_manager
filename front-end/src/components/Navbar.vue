@@ -17,7 +17,7 @@
     </RouterLink>
       <Button to="/workingtimes" text="Bat Time" type="contained" textColor="white" color="black" rounded/>
 
-      <Button to="/register" text="Register" type="contained" textColor="white" color="black" rounded/>
+      <Button to="/auth" text="Authentication" type="contained" textColor="white" color="black" rounded/>
     </div>
     
     
