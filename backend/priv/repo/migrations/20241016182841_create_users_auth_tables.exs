@@ -1,19 +1,16 @@
-defmodule Backend.Repo.Migrations.CreateUsers do
+defmodule Backend.Repo.Migrations.CreateUsersAuthTables do
   use Ecto.Migration
 
   def change do
     execute "CREATE EXTENSION IF NOT EXISTS citext", ""
+
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :username, :string
-      add :role, :string
-      add :email, :string
-      add :team_id, references(:teams, on_delete: :nothing, type: :binary_id)
+      add :email, :citext, null: false
       add :hashed_password, :string, null: false
       add :confirmed_at, :utc_datetime
 
       timestamps(type: :utc_datetime)
-0
     end
 
     create unique_index(:users, [:email])
