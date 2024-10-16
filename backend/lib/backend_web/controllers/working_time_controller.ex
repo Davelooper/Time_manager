@@ -40,4 +40,26 @@ defmodule BackendWeb.WorkingTimeController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def get_all_by_user_id(conn, %{"userId" => userId} = params) do
+    start_date = Map.get(params, "start")
+    end_date = Map.get(params, "end")
+
+
+    # with {:ok, startdate} <- Date.from_iso8601(start_date),
+    #      {:ok, enddate} <- Date.from_iso8601(end_date) do
+    workingtimes = Schedule.list_workingtimes_by_user_id(userId, start_date, end_date)
+    render(conn, :index, workingtimes: workingtimes)
+    # else
+    #   :error ->
+    #     conn
+    #     |> put_status(:bad_request)
+    #     |> json(%{error: "Invalid date format. Expected ISO8601 format (YYYY-MM-DD)."})
+    # end
+  end
+
+  def get_one_by_user_id(conn, %{"userId" => userId, "id" => id}) do
+    working_time = Schedule.get_working_time_by_user_id_and_id(userId, id)
+    render(conn, :show, working_time: working_time)
+  end
 end
