@@ -14,6 +14,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB_DEV}
       MIX_ENV: dev
       DATABASE_URL: ${DATABASE_URL_DEV}
+      SECRET_KEY_BASE: QwaH+0XnSp1qJGEAHWvVH3lu2AbxpH8UmkFQ7CiZNlkUhoKGGkHREOLNGmMV+0M3
     volumes:
       - './backend:/backend'
       - '/backend/deps'
