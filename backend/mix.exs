@@ -32,7 +32,9 @@ defmodule Backend.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-     # {:bcrypt_elixir, "~> 3.0"},
+      {:pbkdf2_elixir, "~> 2.3"},
+      {:bcrypt_elixir, "~> 3.0"},
+      {:comeonin, "~> 5.3"},
       {:guardian, "~> 2.0"},
       {:phoenix, "~> 1.7.14"},
       {:joken, "~> 2.6.2"},
