@@ -1,0 +1,69 @@
+ARG ELIXIR_VERSION=1.14.5
+ARG OTP_VERSION=25.3.2.15
+ARG DEBIAN_VERSION=focal-20240918
+
+ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-ubuntu-${DEBIAN_VERSION}"
+ARG RUNNER_IMAGE="ubuntu:${DEBIAN_VERSION}"
+
+# ---- Build Stage ----
+FROM ${BUILDER_IMAGE} as builder
+
+# Install build dependencies
+RUN apt-get update -y && apt-get install -y build-essential git \
+    && apt-get clean && rm -f /var/lib/apt/lists/*_*
+
+# Set the build directory
+WORKDIR /app
+
+# Install hex + rebar
+RUN mix local.hex --force && mix local.rebar --force
+
+# Copy the project files
+COPY . .
+
+# Set the environment to production
+ENV MIX_ENV="prod"
+
+# Install production dependencies
+RUN mix deps.get --only prod
+
+# Compile assets (CSS/JS)
+RUN mix assets.deploy
+
+# Compile the application
+RUN mix compile
+
+# Build the release
+RUN mix release
+
+# ---- Final Stage ----
+FROM ${RUNNER_IMAGE}
+
+# Install necessary runtime libraries and PostgreSQL client
+RUN apt-get update -y && \
+  apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates postgresql-client \
+  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+
+# Set the locale
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+# Set working directory and copy the release from the builder stage
+WORKDIR "/app"
+COPY --from=builder /app/_build/prod/rel/backend ./
+
+# Copy the entrypoint script
+COPY entrypoint.prod.sh /app/entrypoint.prod.sh
+
+# Make sure the script is executable
+RUN chmod +x /app/entrypoint.prod.sh
+
+# Change ownership to a non-root user for security
+RUN chown nobody /app
+USER nobody
+
+# Entrypoint to start the script
+ENTRYPOINT ["./entrypoint.prod.sh"]

@@ -1,0 +1,42 @@
+services:
+  elixir:
+    build: 
+      dockerfile: Dockerfile
+      context: ./backend
+    ports:
+      - "4000:4000"
+    # supprime le service elixir si tu galères
+    depends_on:
+      - db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: db
+      POSTGRES_DB: time_manager_dev
+      MIX_ENV: dev
+    volumes:
+      - './backend:/backend' # Monter le dossier de travail pour avoir le hot-reloading
+      - '/backend/deps' # Monter les dépendances pour éviter les conflits avec le conteneur
+      - '/backend/_build' # Monter le dossier de build pour le caching
+  db:
+    image: 'postgres:11-alpine'
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: time_manager_dev
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+  vuejs:
+    build: 
+        context: ./front-end
+        dockerfile: Dockerfile.prod
+    ports:
+      - '8000:8000'
+    volumes:
+      - './front-end:/front-end'
+      - /front-end/node_modules
+volumes:
+  pgdata:

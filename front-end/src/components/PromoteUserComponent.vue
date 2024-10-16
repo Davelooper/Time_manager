@@ -27,10 +27,21 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue';
+import {getAllUser} from '../store/userStore'
 function promoteUser(idUser: Number){
 
     console.log('User promoted')
 }
+
+async function fetchUser(){
+ await getAllUser();
+
+}
+
+onMounted(() => {
+  fetchUser()
+});
 </script>
 <style>
 

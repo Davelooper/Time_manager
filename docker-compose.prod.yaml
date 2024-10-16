@@ -2,7 +2,7 @@ services:
   elixir:
     build:
       dockerfile: Dockerfile.prod
-      context: ./time_manager
+      context: ./backend
     ports:
       - "4000:4000"
     depends_on:
@@ -14,9 +14,10 @@ services:
       POSTGRES_DB: ${POSTGRES_DB_PROD}
       MIX_ENV: prod
       PORT: 4000
-      SECRET_KEY_BASE: your_secret_key_base
+      DATABASE_URL: ${DATABASE_URL_PROD}
+      SECRET_KEY_BASE: QwaH+0XnSp1qJGEAHWvVH3lu2AbxpH8UmkFQ7CiZNlkUhoKGGkHREOLNGmMV+0M3
     volumes:
-      - './time_manager:/time_manager'
+      - './backend:/backend'
   db:
     image: 'postgres:11-alpine'
     restart: always

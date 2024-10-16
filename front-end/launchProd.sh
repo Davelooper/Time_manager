@@ -6,6 +6,7 @@ ls  # Liste les fichiers du répertoire
 # Recuperer les dependances
 echo "Installation des dépendances ..."
 npm install -g serve
+npm install run-p
 npm install
 
 # Démarrer le serveur Phoenix

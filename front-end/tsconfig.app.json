@@ -4,7 +4,8 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "env.d.ts" // Assurez-vous que ce fichier est inclus
   ],
   "exclude": [
     "src/**/__tests__/*"

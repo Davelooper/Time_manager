@@ -1,7 +1,7 @@
 #!/bin/sh
 # set -e  # S'interrompre en cas d'erreur
 
-echo "Répertoire actuel : "
+echo "Répertoire actuel de DEV : "
 ls  # Liste les fichiers du répertoire
 # Recuperer les dependances
 echo "Installation des dépendances ..."
