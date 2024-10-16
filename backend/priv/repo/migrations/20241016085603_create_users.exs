@@ -8,6 +8,7 @@ defmodule Backend.Repo.Migrations.CreateUsers do
       add :role, :string
       add :email, :string
       add :team_id, references(:teams, on_delete: :nothing, type: :binary_id)
+      add :password, :string
 
       timestamps(type: :utc_datetime)
     end

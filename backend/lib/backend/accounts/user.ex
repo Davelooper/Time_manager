@@ -9,6 +9,7 @@ defmodule Backend.Accounts.User do
     field :role, :string
     field :email, :string
     field :team_id, :binary_id
+    field :password, :string
 
     timestamps(type: :utc_datetime)
   end
