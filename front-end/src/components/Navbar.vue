@@ -10,6 +10,7 @@
     <div class="flex flex-row gap-4 " v-if="isConnected">
       <Button text="Admin" type="outlined" to="/admin" color="black" textColor="black" rounded/>
       <Button text="Dashboard" type="contained" to="/dashboard" textColor="white" color="black" rounded/>
+      <button @click="logoutUser" class="bg-red-500 text-white px-4 py-2 rounded-lg">Logout</button>
     </div>
     <div class="flex flex-row gap-4 " v-else>
       <RouterLink to="/User" class="overflow-hidden">
@@ -25,7 +26,7 @@
 </template>
 <script setup lang="ts" >
 import Button from './Button.vue';
-  import { useUser } from '../store/userStore';
+  import { logoutUser, useUser } from '../store/userStore';
   const { isConnected } = useUser();
 </script>
 <style scoped>
