@@ -36,6 +36,9 @@ echo "Base de données $POSTGRES_DB créée."
 echo "Exécution des migrations..."
 mix ecto.migrate
 
+echo "svp je crée mes données :D"
+mix run priv/repo/seeds.exs
+
 # Démarrer le serveur Phoenix
 echo "Démarrage du serveur Phoenix..."
 mix phx.server
