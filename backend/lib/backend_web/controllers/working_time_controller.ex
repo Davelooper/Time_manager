@@ -41,14 +41,14 @@ defmodule BackendWeb.WorkingTimeController do
     end
   end
 
-  def get_all_by_user_id(conn, %{"userId" => userId} = params) do
+  def get_all_by_user_id(conn, %{"teamId" => teamId} = params) do
     start_date = Map.get(params, "start")
     end_date = Map.get(params, "end")
 
 
     # with {:ok, startdate} <- Date.from_iso8601(start_date),
     #      {:ok, enddate} <- Date.from_iso8601(end_date) do
-    workingtimes = Schedule.list_workingtimes_by_user_id(userId, start_date, end_date)
+    workingtimes = WorkingTimes.list_workingtimes_by_user_id(teamId, start_date, end_date)
     render(conn, :index, workingtimes: workingtimes)
     # else
     #   :error ->
@@ -58,8 +58,8 @@ defmodule BackendWeb.WorkingTimeController do
     # end
   end
 
-  def get_one_by_user_id(conn, %{"userId" => userId, "id" => id}) do
-    working_time = Schedule.get_working_time_by_user_id_and_id(userId, id)
+  def get_one_by_user_id(conn, %{"teamId" => teamId, "id" => id}) do
+    working_time = WorkingTimes.get_working_time_by_team_id_and_id(teamId, id)
     render(conn, :show, working_time: working_time)
   end
 end
