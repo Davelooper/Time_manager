@@ -120,7 +120,7 @@ async function loginForm() {
   try {
    await authUser(user.value); 
     // Redirection vers la page /workingtimes après la création de l'utilisateur
-    // router.push('/workingtimes');
+    router.push('/dashboard');
   } catch (error) {
     console.error('Erreur lors de la création du compte:', error);
   }
