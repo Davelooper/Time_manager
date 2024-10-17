@@ -1,16 +1,16 @@
 <template >
     <RouterLink to="/home">
-      <div class="w-10 m-4 absolute">
+      <div class="w-10 m-8 absolute">
         <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" viewBox="0 0 32 32"><path d="M32 15H3.41l8.29-8.29-1.41-1.42-10 10a1 1 0 0 0 0 1.41l10 10 1.41-1.41L3.41 17H32z" data-name="4-Arrow Left"/></svg>
       </div>
     </RouterLink>
     <div class="flex flex-row justify-center items-center w-full h-full">
-      <div class="p-6 max-w-md bg-[#ffe177] rounded container">
+      <div class="p-6 max-w-md bg-gradient-to-tr from-amber-200 to-amber-400 rounded-lg shadow-lg dark:bg-gray-800">
               <img class="w-40 mx-auto" src="../assets/img/batman-character.png" alt="batman">
         <form v-if="status === 1" @submit.prevent="registerForm" class="rounded px-8 pt-6 pb-8 mb-4">
           <h2 class="text-1xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">Gotham Register !</h2>
           <div class="mb-4">
-            <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nom :</label>
+            <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name</label>
             <input
               type="text"
               id="name"
@@ -21,7 +21,7 @@
           </div>
     
           <div class="mb-4">
-            <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email :</label>
+            <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
             <input
               type="email"
               id="email"
@@ -32,7 +32,7 @@
           </div>
     
           <div class="mb-6">
-            <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Mot de passe :</label>
+            <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
             <input
               type="password"
               id="password"
@@ -42,10 +42,10 @@
             />
           </div>
     
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between w-full">
             <button
               type="submit"
-              class="bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              class="w-full bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Send a BatRequest
             </button>
@@ -55,7 +55,7 @@
           <h2 class="text-1xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">Gotham Login !</h2>
     
           <div class="mb-4">
-            <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email :</label>
+            <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
             <input
               type="email"
               id="email"
@@ -66,7 +66,7 @@
           </div>
     
           <div class="mb-6">
-            <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Mot de passe :</label>
+            <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
             <input
               type="password"
               id="password"
@@ -76,17 +76,17 @@
             />
           </div>
     
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between w-full">
             <button
               type="submit"
-              class="bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              class="w-full bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Send a BatRequest
             </button>
           </div>
         </form>
-        <span class=" text-gray-900 md:text-1xl" v-if="status === 1">Already BatAccount ? <button @click="toggleStatus">Click here</button></span>
-        <span class=" text-gray-900 md:text-1xl" v-else-if="status === 2">No BatAccount ? <button @click="toggleStatus">Click here</button></span>
+        <button v-if="status === 1" @click="toggleStatus">Already BatAccount ? Click here</button>
+        <button  v-else-if="status === 2" @click="toggleStatus">No BatAccount ? Click here</button>
   
       </div>
     </div>

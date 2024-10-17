@@ -51,6 +51,20 @@ const router = createRouter({
       name: 'WorkingTimes',
       component: WorkingTimes
     },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('@/pages/Profile.vue')
+    },
+    {
+      path: '/notfound',
+      name: 'notFound',
+      component: () => import('@/pages/NotFound.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: { name: 'notFound' }
+    }
   ]
 })
 
