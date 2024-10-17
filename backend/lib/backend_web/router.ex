@@ -14,7 +14,6 @@ defmodule BackendWeb.Router do
     post "/users/log_in", UserSessionController, :create
 
     resources "/teams", TeamController, except: [:new, :edit]
-
     resources "/working_times", WorkingTimeController, except: [:new, :edit]
     get("workingtime/:userId", WorkingTimeController, :get_all_by_user_id)
     get("workingtime/:userId/:id", WorkingTimeController, :get_one_by_user_id)

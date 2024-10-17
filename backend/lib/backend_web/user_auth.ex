@@ -25,16 +25,23 @@ defmodule BackendWeb.UserAuth do
   disconnected on log out. The line can be safely removed
   if you are not using LiveView.
   """
-  def log_in_user(conn, user, params \\ %{}) do
-    token = Accounts.generate_user_session_token(user)
-    user_return_to = get_session(conn, :user_return_to)
+def log_in_user(conn, user, params \\ %{}) do
+  # Générer le token JWT pour l'utilisateur
+  case Backend.Token.generate(%{"id" => user.id, "email" => user.email}) do
+    {:ok, jwt_token} ->
+      # Utiliser le token JWT comme user_token dans la session
+      conn
+      |> renew_session()
+      |> put_token_in_session(jwt_token) # Remplacer le token de session par le token JWT
+      |> maybe_write_remember_me_cookie(jwt_token, params)
+      |> redirect(to: get_session(conn, :user_return_to) || signed_in_path(conn))
 
-    conn
-    |> renew_session()
-    |> put_token_in_session(token)
-    |> maybe_write_remember_me_cookie(token, params)
-    |> redirect(to: user_return_to || signed_in_path(conn))
+    {:error, reason} ->
+      conn
+      |> put_flash(:error, "Erreur lors de la génération du token : #{reason}")
+      |> redirect(to: ~p"/users/log_in")
   end
+end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}) do
     put_resp_cookie(conn, @remember_me_cookie, token, @remember_me_options)
@@ -90,11 +97,18 @@ defmodule BackendWeb.UserAuth do
   Authenticates the user by looking into the session
   and remember me token.
   """
-  def fetch_current_user(conn, _opts) do
-    {user_token, conn} = ensure_user_token(conn)
-    user = user_token && Accounts.get_user_by_session_token(user_token)
-    assign(conn, :current_user, user)
+def fetch_current_user(conn, _opts) do
+  {user_token, conn} = ensure_user_token(conn)
+
+  case user_token && Backend.Token.verify(user_token) do
+    {:ok, claims} ->
+      user = Accounts.get_user!(claims["id"])
+      assign(conn, :current_user, user)
+    {:error, _reason} ->
+      assign(conn, :current_user, nil) # Si le token n'est pas valide, assigner nil
   end
+end
+
 
   defp ensure_user_token(conn) do
     if token = get_session(conn, :user_token) do

@@ -134,11 +134,16 @@ defmodule Backend.Accounts do
       nil
 
   """
-  def get_user_by_email_and_password(email, password)
-      when is_binary(email) and is_binary(password) do
-    user = Repo.get_by(User, email: email)
-    if User.valid_password?(user, password), do: user
+def get_user_by_email_and_password(email, password) when is_binary(email) and is_binary(password) do
+  user = Repo.get_by(User, email: email)
+
+  if user && User.valid_password?(user, password) do
+    user
+  else
+    nil  # Assurez-vous de retourner nil si l'utilisateur n'est pas trouvé ou si le mot de passe est incorrect
   end
+end
+
 
   @doc """
   Gets a single user.
