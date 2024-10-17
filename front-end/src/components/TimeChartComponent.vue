@@ -1,5 +1,5 @@
 <template>
-  <div class="border-gray-200 rounded-lg text-center shadow p-5 bg-white bg-opacity-10 dark:border-gray-700">
+  <div class="border-gray-200 rounded-lg text-center shadow p-5  dark:border-gray-700">
     <ul class="flex border-b text-center">
     <li
       @click="activeTab = 1"
