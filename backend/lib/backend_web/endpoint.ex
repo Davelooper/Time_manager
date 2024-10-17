@@ -51,7 +51,15 @@ defmodule BackendWeb.Endpoint do
   plug(Plug.MethodOverride)
   plug(Plug.Head)
   plug(Plug.Session, @session_options)
+  # Le plug CORSPlug doit être appelé avant Router
+  plug(CORSPlug,
+    origin: ["http://localhost:4000", "*"],
+    methods: ["GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH", "HEAD"],
+    headers: ["Authorization", "Content-Type"],
+    credentials: true
+  )
+
   plug(BackendWeb.Router)
-  plug(CORSPlug, origin: ["*"])
+
   # ou une configuration plus restrictive selon tes besoins
 end

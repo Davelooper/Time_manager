@@ -4,9 +4,35 @@ defmodule Backend.Accounts do
   """
 
   import Ecto.Query, warn: false
+  alias Backend.Token
   alias Backend.Repo
 
   alias Backend.Accounts.User
+
+  def verify_user_password_by_email(email, password)
+      when is_binary(email) and is_binary(password) do
+    case Repo.get_by(User, email: email) do
+      nil ->
+        :error
+
+      user ->
+        if User.valid_password?(user, password) do
+          {:ok, user}
+        else
+          :error
+        end
+    end
+  end
+
+  def generateUserToken(user) do
+    Token.generate_token(%{
+      "id" => user.id,
+      "email" => user.email,
+      "role" => user.role,
+      "team_id" => user.team_id,
+      "username" => user.username
+    })
+  end
 
   @doc """
   Returns the list of users.
