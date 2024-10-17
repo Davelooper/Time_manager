@@ -20,6 +20,7 @@ defmodule BackendWeb.Router do
     resources("/users", UserController, except: [:new, :edit])
     post("/users", UserController, :create)
     post("/users/log_in", UserSessionController, :create)
+    get("/user/verifyToken", UserController, :userVerifyToken)
 
     resources("/teams", TeamController, except: [:new, :edit])
     resources("/working_times", WorkingTimeController, except: [:new, :edit])
