@@ -7,11 +7,6 @@
 # General application configuration
 import Config
 
-config :cors_plug,
-  origin: ["*"],
-  max_age: 86400,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
-
 config :backend,
   ecto_repos: [Backend.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]

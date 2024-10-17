@@ -118,7 +118,7 @@ const user = ref<User>({email: '', username: '', password:'' });
 async function loginForm() {
   console.log("REGISTER");
   try {
-    await authUser(user.value);
+   await authUser(user.value); 
     // Redirection vers la page /workingtimes après la création de l'utilisateur
     router.push('/workingtimes');
   } catch (error) {

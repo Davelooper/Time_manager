@@ -6,9 +6,11 @@ interface Role {
 }
 interface UserState {
   isConnected: boolean;
+  token: string;
 }
 const state = reactive<UserState>({
-  isConnected: true,
+  isConnected: false,
+  token: ''
 })
 
 export function useUser() {
@@ -52,19 +54,23 @@ export function createUser(user: User): Promise<void> {
 }
 
 export function authUser(user: User): Promise<void> {
-  return axios.post('http://localhost:4000/api/user/login', {
+  return axios.post('http://localhost:4000/api/users/log_in', {
     email: user.email,
     password: user.password,
   })
     .then(response => {
-      console.log('Utilisateur LOGIN:', response.data);
+      setToken(response.data.token);
+      state.isConnected = true;
+      return;
     })
     .catch(error => {
       console.error('Erreur lors de la création de l\'utilisateur:', error);
       throw error;
     });
 }
-
+export function setToken(token: string): void {
+  state.token = token;
+}
 
 export async function getUserById(id: number): Promise<ManageUsers> {
   try {

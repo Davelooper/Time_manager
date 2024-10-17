@@ -6,14 +6,14 @@ defmodule Backend.Token do
 
   def generate_token(data) do
     # Utilisation d'atomes comme clé après Map.from_struct
-    id = Map.get(data, :id)
-    email = Map.get(data, :email)
-    role = Map.get(data, :role)
-    team_id = Map.get(data, :team_id)
-    username = Map.get(data, :username)
+    id = Map.get(data, "id")
+    email = Map.get(data, "email")
+    role = Map.get(data, "role")
+    team_id = Map.get(data, "team_id")
+    username = Map.get(data, "username")
 
     if is_nil(id) or is_nil(email) do
-      {:error, %{"error" => "ID ou email est manquant"}}
+      {:error, %{"error" => "ID ou email est manquant: #{inspect(data)}"}}
     else
       claims = %{
         "id" => id,
