@@ -5,16 +5,15 @@ defmodule Backend.Token do
   @token_age_secs 7 * 86_400
 
   def generate_token(data) do
+    # Utilisation d'atomes comme clé après Map.from_struct
     id = Map.get(data, "id")
     email = Map.get(data, "email")
     role = Map.get(data, "role")
     team_id = Map.get(data, "team_id")
     username = Map.get(data, "username")
 
-
-
-    if id == nil or email == nil do
-      {:error, %{"error" => "ID ou email est manquant"}}
+    if is_nil(id) or is_nil(email) do
+      {:error, %{"error" => "ID ou email est manquant: #{inspect(data)}"}}
     else
       claims = %{
         "id" => id,
@@ -22,7 +21,6 @@ defmodule Backend.Token do
         "role" => role,
         "team_id" => team_id,
         "username" => username,
-
         "exp" => DateTime.to_unix(DateTime.add(DateTime.utc_now(), @token_age_secs, :second))
       }
 

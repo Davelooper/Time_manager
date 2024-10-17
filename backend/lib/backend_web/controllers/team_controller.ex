@@ -4,14 +4,22 @@ defmodule BackendWeb.TeamController do
   alias Backend.Teams
   alias Backend.Teams.Team
 
-  action_fallback BackendWeb.FallbackController
+  action_fallback(BackendWeb.FallbackController)
 
   def index(conn, _params) do
     teams = Teams.list_teams()
     render(conn, :index, teams: teams)
   end
 
-  def create(conn, %{"team" => team_params}) do
+  def create(conn, params) do
+    team_params = Map.get(params, "team")
+
+    if is_nil(team_params) do
+      conn
+      |> put_status(:bad_request)
+      |> json(%{success: false, message: "Team is required"})
+    end
+
     with {:ok, %Team{} = team} <- Teams.create_team(team_params) do
       conn
       |> put_status(:created)

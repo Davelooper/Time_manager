@@ -1,29 +1,32 @@
 defmodule Backend.Accounts.User do
+  alias Backend.Repo
   use Ecto.Schema
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
-    field :email, :string
-    field :password, :string, virtual: true, redact: true
-    field :hashed_password, :string, redact: true
-    field :current_password, :string, virtual: true, redact: true
-    field :confirmed_at, :utc_datetime
-    field :role, :string
-    field :team_id, Ecto.UUID
-    field :username, :string
+    field(:email, :string)
+    field(:password, :string, virtual: true, redact: true)
+    field(:hashed_password, :string, redact: true)
+    field(:current_password, :string, virtual: true, redact: true)
+    field(:confirmed_at, :utc_datetime)
+    field(:role, :string)
+    field(:team_id, Ecto.UUID)
+    field(:username, :string)
     timestamps(type: :utc_datetime)
   end
 
- @doc false
- def changeset(user, attrs) do
-  user
-  |> cast(attrs, [:email, :role, :team_id, :username, :password])  # Inclure :password
-  |> validate_required([:email, :password, :role, :team_id, :username])
-  |> unique_constraint(:email)
-  |> validate_length(:password, min: 6)
-  |> maybe_hash_password(hash_password: true)  # Passer les options correctement
-end
+  @doc false
+  def changeset(user, attrs) do
+    user
+    # Inclure :password
+    |> cast(attrs, [:email, :role, :team_id, :username, :password])
+    |> validate_required([:email, :password, :role, :team_id, :username])
+    |> unique_constraint(:email)
+    |> validate_length(:password, min: 6)
+    # Passer les options correctement
+    |> maybe_hash_password(hash_password: true)
+  end
 
   defp validate_email(changeset, opts) do
     changeset
@@ -44,7 +47,7 @@ end
     |> maybe_hash_password(opts)
   end
 
-    defp maybe_hash_password(changeset, opts) do
+  defp maybe_hash_password(changeset, opts) do
     hash_password? = Keyword.get(opts, :hash_password, true)
     password = get_change(changeset, :password)
 

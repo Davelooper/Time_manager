@@ -3,8 +3,8 @@ defmodule BackendWeb.UserController do
 
   alias Backend.Accounts
   alias Backend.Accounts.User
-
-  action_fallback BackendWeb.FallbackController
+  alias Backend.Token
+  action_fallback(BackendWeb.FallbackController)
 
   plug(
     BackendWeb.Plugs.AuthPlug
@@ -17,11 +17,20 @@ defmodule BackendWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
+    with {:ok, %User{} = user} <- Accounts.create_user(user_params),
+         user_map = Map.from_struct(user) |> Map.new(fn {k, v} -> {Atom.to_string(k), v} end),
+         {:ok, token} <- Token.generate_token(user_map) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
-      |> render(:show, user: user)
+      |> json(%{
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        # Ajout du token dans la réponse JSON
+        token: token
+      })
     end
   end
 
@@ -43,6 +52,37 @@ defmodule BackendWeb.UserController do
 
     with {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
+    end
+  end
+
+  def userVerifyToken(conn, params) do
+    ## Return ok car le middleware AuthPlug vérifie déjà le token
+    conn
+    |> put_status(:ok)
+    |> json(%{message: "Token is valid"})
+  end
+
+  def userLogin(conn, %{"email" => email, "password" => password}) do
+    case Accounts.verify_user_password_by_email(email, password) do
+      {:ok, user} ->
+        user_map = Map.from_struct(user)
+
+        case Accounts.generateUserToken(user_map) do
+          {:ok, token} ->
+            conn
+            |> put_status(:ok)
+            |> json(%{token: token})
+
+          {:error, reason} ->
+            conn
+            |> put_status(:internal_server_error)
+            |> json(%{error: reason})
+        end
+
+      :error ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: "Invalid email or password"})
     end
   end
 end

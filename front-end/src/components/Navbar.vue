@@ -1,6 +1,6 @@
 
 <template >
-  <nav class="gotham-nav flex flex-row h-20 items-center justify-evenly bg-slate-50">
+  <nav class="gotham-nav flex flex-row h-20 min-h-20 items-center justify-evenly  bg-gradient-to-br from-amber-200 to-amber-400">
   
     <RouterLink to="/home" class="overflow-hidden">
       <img src="@/assets/timemanager.png" alt="Logo TimeManager" class="h-14 w-full" />
@@ -8,8 +8,8 @@
     <div>
     </div>
     <div class="flex flex-row gap-4 " v-if="isConnected">
-      <Button text="Admin" type="outlined" to="/login" color="black" textColor="black" rounded/>
-      <Button text="Dashboard" type="contained" to="/register" textColor="white" color="black" rounded/>
+      <Button text="Admin" type="outlined" to="/admin" color="black" textColor="black" rounded/>
+      <Button text="Dashboard" type="contained" to="/dashboard" textColor="white" color="black" rounded/>
     </div>
     <div class="flex flex-row gap-4 " v-else>
       <RouterLink to="/User" class="overflow-hidden">
@@ -17,7 +17,7 @@
     </RouterLink>
       <Button to="/workingtimes" text="Bat Time" type="contained" textColor="white" color="black" rounded/>
 
-      <Button to="/register" text="Register" type="contained" textColor="white" color="black" rounded/>
+      <Button to="/auth" text="Authentication" type="contained" textColor="white" color="black" rounded/>
     </div>
     
     

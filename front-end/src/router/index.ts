@@ -37,8 +37,8 @@ const router = createRouter({
       component: User
     },
     {
-      path: '/Register',
-      name: 'register',
+      path: '/auth',
+      name: 'auth',
       component: Register
     },
     {
@@ -51,6 +51,20 @@ const router = createRouter({
       name: 'WorkingTimes',
       component: WorkingTimes
     },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('@/pages/Profile.vue')
+    },
+    {
+      path: '/notfound',
+      name: 'notFound',
+      component: () => import('@/pages/NotFound.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: { name: 'notFound' }
+    }
   ]
 })
 
