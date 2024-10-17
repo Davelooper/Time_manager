@@ -32,14 +32,16 @@ defmodule Backend.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:pbkdf2_elixir, "~> 2.3"},
       {:bcrypt_elixir, "~> 3.0"},
+      {:comeonin, "~> 5.3"},
       {:guardian, "~> 2.0"},
       {:phoenix, "~> 1.7.14"},
       {:joken, "~> 2.6.2"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
-      # {:phoenix_html, "~> 4.1"},
+      {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       # TODO bump on release to {:phoenix_live_view, "~> 1.0.0"},
       {:phoenix_live_view, "~> 1.0.0-rc.1", override: true},

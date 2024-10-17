@@ -6,6 +6,11 @@ defmodule BackendWeb.UserController do
 
   action_fallback BackendWeb.FallbackController
 
+  plug(
+    BackendWeb.Plugs.AuthPlug
+    when action in [:show, :index, :indexAll, :update, :delete, :userVerifyToken]
+  )
+
   def index(conn, _params) do
     users = Accounts.list_users()
     render(conn, :index, users: users)

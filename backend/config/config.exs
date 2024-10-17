@@ -37,6 +37,8 @@ config :backend, BackendWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :backend, Backend.Mailer, adapter: Swoosh.Adapters.Local
 
+config :joken, default_signer: "BatmanIsHereForJustice54000"
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
