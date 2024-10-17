@@ -16,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-	import ProgressBar from "@/components/ProgressBar.vue";
 import Navbar from "../components/Navbar.vue"
 import Progress7Days from "@/components/Progress7Days.vue";
 </script>
