@@ -3,7 +3,7 @@ defmodule BackendWeb.UserController do
 
   alias Backend.Accounts
   alias Backend.Accounts.User
-
+  alias Backend.Token
   action_fallback(BackendWeb.FallbackController)
 
   plug(
@@ -17,11 +17,21 @@ defmodule BackendWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
+    with {:ok, %User{} = user} <- Accounts.create_user(user_params),
+         # Convertir en map
+         user_map = Map.from_struct(user),
+         {:ok, token} <- Token.generate_token(user_map) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
-      |> render(:show, user: user)
+      |> json(%{
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        # Ajout du token dans la réponse JSON
+        token: token
+      })
     end
   end
 
