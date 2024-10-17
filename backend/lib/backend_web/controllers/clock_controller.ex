@@ -40,4 +40,15 @@ defmodule BackendWeb.ClockController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def get_by_user_id(conn, %{"userId" => userId}) do
+    clocks = Schedule.get_clock_by_user_id(userId)
+    if clocks == [] do
+      conn
+      |> put_status(:not_found)
+      |> json(%{message: "No clocks found for user with ID #{userId}"})
+    else
+      render(conn, "index.json", clocks: clocks)
+    end
+  end
 end
