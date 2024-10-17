@@ -15,7 +15,13 @@ defmodule BackendWeb.UserSessionController do
         |> json(%{success: false, message: "Invalid email or password"})
 
       user ->
-        case Token.generate_token(%{"id" => user.id, "email" => user.email}) do
+        case Token.generate_token(%{
+          "id" => user.id,
+          "email" => user.email,
+          "role" => user.role,
+          "team_id" => user.team_id,
+          "username" => user.username
+          }) do
           {:ok, token} ->
             # Renvoyer un token JWT en JSON
             json(conn, %{success: true, token: token})

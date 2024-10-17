@@ -7,6 +7,11 @@ defmodule Backend.Token do
   def generate_token(data) do
     id = Map.get(data, "id")
     email = Map.get(data, "email")
+    role = Map.get(data, "role")
+    team_id = Map.get(data, "team_id")
+    username = Map.get(data, "username")
+
+
 
     if id == nil or email == nil do
       {:error, %{"error" => "ID ou email est manquant"}}
@@ -14,6 +19,10 @@ defmodule Backend.Token do
       claims = %{
         "id" => id,
         "email" => email,
+        "role" => role,
+        "team_id" => team_id,
+        "username" => username,
+
         "exp" => DateTime.to_unix(DateTime.add(DateTime.utc_now(), @token_age_secs, :second))
       }
 
