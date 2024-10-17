@@ -8,7 +8,7 @@ REM Afficher la variable d'environnement SERVICE_ENV pour débogage
 echo SERVICE_ENV = %SERVICE_ENV%
 
 REM Vérifier la variable d'environnement SERVICE_ENV
-if "%SERVICE_ENV%" == "DEV" (
+if "%SERVICE_ENV%" == "PROD" (
     echo Lancement de l'environnement de production...
 
     REM Arrêter et supprimer les conteneurs associés à docker-compose.prod.yaml

@@ -98,10 +98,10 @@ import { createUser,authUser } from '@/store/userStore';
 import { ref } from 'vue';
  
 
-let status = ref(1)
+let status = ref(2)
 
 function toggleStatus(){
-    status.value = status.value === 1 ? 2 : 1;
+    status.value = status.value === 2 ? 2 : 2;
 }
 
 
@@ -120,7 +120,7 @@ async function loginForm() {
   try {
    await authUser(user.value); 
     // Redirection vers la page /workingtimes après la création de l'utilisateur
-    router.push('/workingtimes');
+    // router.push('/workingtimes');
   } catch (error) {
     console.error('Erreur lors de la création du compte:', error);
   }

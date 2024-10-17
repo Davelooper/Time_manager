@@ -18,10 +18,10 @@ defmodule BackendWeb.Router do
   scope "/api", BackendWeb do
     pipe_through(:api)
 
-    resources("/users", UserController, except: [:new, :edit])
-    post("/users", UserController, :create)
+    get("/users/verifyToken", UserController, :userVerifyToken)
     post("/users/log_in", UserController, :userLogin)
-    get("/user/verifyToken", UserController, :userVerifyToken)
+    post("/users", UserController, :create)
+    resources("/users", UserController, except: [:new, :edit])
 
     resources("/teams", TeamController, except: [:new, :edit])
     resources("/working_times", WorkingTimeController, except: [:new, :edit])
