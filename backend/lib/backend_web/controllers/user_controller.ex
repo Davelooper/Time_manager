@@ -4,7 +4,7 @@ defmodule BackendWeb.UserController do
   alias Backend.Accounts
   alias Backend.Accounts.User
 
-  action_fallback BackendWeb.FallbackController
+  action_fallback(BackendWeb.FallbackController)
 
   plug(
     BackendWeb.Plugs.AuthPlug
@@ -44,5 +44,12 @@ defmodule BackendWeb.UserController do
     with {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  def userVerifyToken(conn, params) do
+    ## Return ok car le middleware AuthPlug vérifie déjà le token
+    conn
+    |> put_status(:ok)
+    |> json(%{message: "Token is valid"})
   end
 end

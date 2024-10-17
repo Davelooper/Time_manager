@@ -26,7 +26,7 @@ until pg_isready -q -h "$POSTGRES_HOST" -p 5432 -U "$POSTGRES_USER"; do
   sleep 2
 done
 
-# exec mix ecto.reset
+mix ecto.reset
 
 echo "La base de données $POSTGRES_DB n'existe pas. Création..."
 mix ecto.create
