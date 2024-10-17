@@ -34,9 +34,17 @@ defmodule BackendWeb.UserController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-    render(conn, :show, user: user)
+  def show(conn, params) do
+    id = Map.get(params, "id")
+
+    if is_nil(id) do
+      conn
+      |> put_status(:bad_request)
+      |> json(%{error: "Missing id parameter"})
+    else
+      user = Accounts.get_user!(id)
+      render(conn, :show, user: user)
+    end
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
@@ -55,8 +63,8 @@ defmodule BackendWeb.UserController do
     end
   end
 
-  def userVerifyToken(conn, params) do
-    ## Return ok car le middleware AuthPlug vérifie déjà le token
+  def userVerifyToken(conn, _params) do
+    # Si le token est valide (vérifié par le plug d'authentification), renvoyer une réponse réussie
     conn
     |> put_status(:ok)
     |> json(%{message: "Token is valid"})
