@@ -1,12 +1,7 @@
 defmodule BackendWeb.FallbackController do
-  @moduledoc """
-  Translates controller action results into valid `Plug.Conn` responses.
-
-  See `Phoenix.Controller.action_fallback/1` for more details.
-  """
   use BackendWeb, :controller
 
-  # This clause handles errors returned by Ecto's insert/update/delete.
+  # Gestion des erreurs pour les changesets Ecto
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)
@@ -14,11 +9,18 @@ defmodule BackendWeb.FallbackController do
     |> render(:error, changeset: changeset)
   end
 
-  # This clause is an example of how to handle resources that cannot be found.
+  # Gestion des erreurs pour les ressources non trouvées
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
-    |> put_view(html: BackendWeb.ErrorHTML, json: BackendWeb.ErrorJSON)
+    |> put_view(json: BackendWeb.ErrorJSON)
     |> render(:"404")
+  end
+
+  # Nouvelle clause pour gérer les erreurs génériques de type map
+  def call(conn, {:error, %{"error" => message}}) do
+    conn
+    |> put_status(:bad_request)
+    |> json(%{error: message})
   end
 end
