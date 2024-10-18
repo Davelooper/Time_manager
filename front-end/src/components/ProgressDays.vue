@@ -34,10 +34,10 @@ const totalPercentage = computed(() => {
 </script>
 
 <template>
-  <div class="w-full bg-gradient-to-br backdrop-blur-lg from-gray-800/60 to-slate-500/20 min-h-10 rounded shadow py-2 px-4 flex flex-col gap-1">
+  <div class="w-full bg-gradient-to-br backdrop-blur-lg from-slate-800/10 to-slate-500/20  min-h-10 h-auto rounded shadow py-4 px-4 flex flex-col gap-1 flex-wrap">
     <p class="select-none text-slate-300 font-semibold whitespace-nowrap">{{ title }}</p>  
      <p class="select-none text-2xl bg-gradient-to-br font-bold bg-clip-text text-transparent from-yellow-300 to-yellow-600">{{totalPercentage}}%</p>
-    <div class="flex flex-row justify-start  items-center gap-3 flex-wrap">
+    <div class="flex flex-row justify-start items-center gap-3 flex-wrap">
       <ProgressBar 
       v-for="(value, index) in data" 
        :key="index" 
