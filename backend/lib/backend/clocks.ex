@@ -101,4 +101,9 @@ defmodule Backend.Clocks do
   def change_clock(%Clock{} = clock, attrs \\ %{}) do
     Clock.changeset(clock, attrs)
   end
+
+  def get_clock_by_user_id(user_id) do
+    from(c in Clock, where: c.user_id == ^user_id)
+    |> Repo.all()
+  end
 end

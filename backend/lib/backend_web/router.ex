@@ -29,7 +29,7 @@ defmodule BackendWeb.Router do
     get("workingtime/:userId/:id", WorkingTimeController, :get_one_by_user_id)
     post("workingtime/:userId", WorkingTimeController, :create)
 
-    resources("/clocks", ClockController, except: [:new, :edit])
+    # resources("/clocks", ClockController, except: [:new, :edit])
     get("/clocks/:userId", ClockController, :get_by_user_id)
     post("/clocks/:userId", ClockController, :create)
     get("/clock/:id", ClockController, :show)
