@@ -26,7 +26,7 @@ until pg_isready -q -h "$POSTGRES_HOST" -p 5432 -U "$POSTGRES_USER"; do
   sleep 2
 done
 
-# exec mix ecto.reset
+mix ecto.reset
 
 echo "La base de données $POSTGRES_DB n'existe pas. Création..."
 mix ecto.create
@@ -35,6 +35,9 @@ echo "Base de données $POSTGRES_DB créée."
 # Exécuter les migrations, même si la base de données existe déjà
 echo "Exécution des migrations..."
 mix ecto.migrate
+
+echo "svp je crée mes données :D"
+mix run priv/repo/seeds.exs
 
 # Démarrer le serveur Phoenix
 echo "Démarrage du serveur Phoenix..."
