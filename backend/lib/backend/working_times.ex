@@ -8,6 +8,7 @@ defmodule Backend.WorkingTimes do
 
   alias Backend.WorkingTimes.WorkingTime
 
+
   @doc """
   Returns the list of working_times.
 
@@ -101,4 +102,31 @@ defmodule Backend.WorkingTimes do
   def change_working_time(%WorkingTime{} = working_time, attrs \\ %{}) do
     WorkingTime.changeset(working_time, attrs)
   end
+
+
+  def list_workingtimes_by_team_id(team_id, start_date, end_date) do
+    query =
+      from(w in WorkingTime,
+        where: w.team_id == ^team_id,
+        where: ^is_nil(start_date) or w.start >= ^start_date,
+        where: ^is_nil(end_date) or w.end <= ^end_date,
+        order_by: [asc: w.start]
+      )
+
+    Repo.all(query)
+  end
+
+
+  def get_working_time_by_team_id_and_id(team_id, id) do
+    case Repo.one(from w in WorkingTime, where: w.team_id == ^team_id, where: w.id == ^id) do
+      nil -> {:error, :not_found}
+      working_time -> {:ok, working_time}
+    end
+  end
+
+  # def get_working_time_by_user_id_and_id(user_id, id) do
+  #   from(w in WorkingTime, where: w.user_id == ^user_id, where: w.id == ^id)
+  #   |> Repo.one()
+  # end
+
 end
