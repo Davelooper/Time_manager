@@ -21,9 +21,11 @@ defmodule BackendWeb.Router do
     #resources "/workingtime", WorkingTimeController, except: [:new, :edit]
     get("workingtime/:teamId/:id", WorkingTimeController, :get_one_by_user_id)
     get("workingtime/:teamId", WorkingTimeController, :get_all_by_team_id)
+    put("workingtime/:id", WorkingTimeController, :update)
     post("workingtime/:teamId", WorkingTimeController, :create)
+    delete("workingtime/:id", WorkingTimeController, :delete)
 
-    resources "/clocks", ClockController, except: [:new, :edit]
+    # resources "/clocks", ClockController, except: [:new, :edit]
     get("/clocks/:userId", ClockController, :get_by_user_id)
     post("/clocks/:userId", ClockController, :create)
     get("/clock/:id", ClockController, :show)

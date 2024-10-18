@@ -43,14 +43,14 @@ defmodule BackendWeb.WorkingTimeController do
   #   render(conn, :show, working_time: working_time)
   # end
 
-  # def update(conn, %{"id" => id, "working_time" => working_time_params}) do
-  #   working_time = WorkingTimes.get_working_time!(id)
-  #   IO.inspect(working_time)
+  def update(conn, %{"id" => id, "working_time" => working_time_params}) do
+    working_time = WorkingTimes.get_working_time!(id)
+    IO.inspect(working_time)
 
-  #   with {:ok, %WorkingTime{} = working_time} <- WorkingTimes.update_working_time(working_time, working_time_params) do
-  #     render(conn, :show, working_time: working_time)
-  #   end
-  # end
+    with {:ok, %WorkingTime{} = working_time} <- WorkingTimes.update_working_time(working_time, working_time_params) do
+      render(conn, :show, working_time: working_time)
+    end
+  end
 
   def delete(conn, %{"id" => id}) do
     working_time = WorkingTimes.get_working_time!(id)

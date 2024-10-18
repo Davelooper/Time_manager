@@ -11,9 +11,9 @@ defmodule BackendWeb.WorkingTimeJSON do
   @doc """
   Renders a single working_time.
   """
-  # def show(%{working_time: working_time}) do
-  #   %{data: data(working_time)}
-  # end
+  def show(%{working_time: working_time}) do
+    %{data: data(working_time)}
+  end
 
   defp data(%WorkingTime{} = working_time) do
     %{
