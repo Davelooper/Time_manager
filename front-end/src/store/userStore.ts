@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { reactive, computed, onMounted } from "vue"
+import { jwtDecode } from 'jwt-decode';
 
 // Interface de l'utilisateur et du rôle
 interface Role {
@@ -105,7 +106,26 @@ export function setToken(token: string): void {
 
 // Fonction pour récupérer le token depuis localStorage
 export function getToken(): string {
+  if (state.token) return state.token;
   return localStorage.getItem('token') ?? '';
+}
+export function getDecodedToken(): any {
+  const token = getToken(); // Récupérer le token stocké
+
+  if (!token) {
+    console.error("Aucun token disponible pour décoder");
+    return null;
+  }
+
+  try {
+    // Décoder le token
+    const decoded = jwtDecode(token);
+    console.log("Token décodé:", decoded);
+    return decoded;
+  } catch (error) {
+    console.error("Erreur lors du décodage du token:", error);
+    return null;
+  }
 }
 
 // Fonction pour supprimer le token de localStorage

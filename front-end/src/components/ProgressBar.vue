@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center relative group">
+  <div class="flex flex-col items-center justify-center relative group h-full">
     <div is="tooltip"  class="bg-white text-black z-10 text-xs font-semibold p-2 rounded-lg shadow-lg absolute left-6 top-1/2 transform -translate-y-1/2 hidden group-hover:flex transition-opacity duration-300 opacity-0 group-hover:opacity-100">
       {{ value }}%
     </div>
