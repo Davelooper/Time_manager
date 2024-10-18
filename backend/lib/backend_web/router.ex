@@ -32,6 +32,8 @@ defmodule BackendWeb.Router do
     # resources("/clocks", ClockController, except: [:new, :edit])
     get("/clocks/:userId", ClockController, :get_by_user_id)
     post("/clocks/:userId", ClockController, :create)
+    delete("/clocks/:id", ClockController, :delete)
+    put("clocks/:id", ClockController, :update)
     get("/clock/:id", ClockController, :show)
   end
 
