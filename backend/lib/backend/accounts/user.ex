@@ -140,3 +140,12 @@ defmodule Backend.Accounts.User do
     end
   end
 end
+
+
+def verify_webauthn_token(user, credential_data) do
+  if user.web_auth_token == credential_data["id"] do
+    true
+  else
+    false
+  end
+end

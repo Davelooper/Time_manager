@@ -69,7 +69,7 @@ export function authUser(user: User): Promise<void> {
     });
 }
 export function biometricAuth(credential: string): Promise<void> {
-  return axios.post('http://localhost:4000/api/users/biometric', {
+  return axios.post('http://localhost:4000/api/users/webauths', {
     code: ''
   })
     .then(response => {
