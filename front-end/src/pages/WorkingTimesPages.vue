@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import i18n from '@/store/i18n';
 import router from '@/router';
 import Navbar from '@/components/Navbar.vue';
@@ -20,9 +20,7 @@ const currentUserModel = ref<CurrentUser>({
 });
 
 
-function updateTime() {
-  console.log("Date et heure mises à jour :");
-}
+
 
 
 function formatDateTime() {
@@ -41,59 +39,64 @@ function addNewDate(iduser: number) {
   workingTimeModel.value.date = formatDateTime();
   console.log(workingTimeModel.value.date, iduser)
   // j envoi ma requete 
- // createWorkingTime(iduser, workingTimeModel.value)
+  // createWorkingTime(iduser, workingTimeModel.value)
 
- const currentTime = new Date().toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
-    minute: '2-digit', 
-    hour12: false 
+  const currentTime = new Date().toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
   });
 }
 
 const showForm = ref(false);
 const dateToday = ref('');
+const optionsDate: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+const optionsTime: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
+const updateDateTime = () => {
+  const today = new Date();
+  dateToday.value = `${today.toLocaleDateString('en-US', optionsDate)} - ${today.toLocaleTimeString('en-US', optionsTime)}`;
+};
+let intervalId: number;
 onMounted(() => {
   const today = new Date();
-  const optionsDate: Intl.DateTimeFormatOptions = { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  };
-  const optionsTime: Intl.DateTimeFormatOptions = { 
-    hour: '2-digit', 
-    minute: '2-digit', 
-    hour12: true
-  };
+  updateDateTime();
+  intervalId = window.setInterval(updateDateTime, 1000); // Actualiser chaque seconde
+
 
   dateToday.value = `${today.toLocaleDateString('en-US', optionsDate)} - ${today.toLocaleTimeString('en-US', optionsTime)}`;
-  
+
   setTimeout(() => {
     showForm.value = true;
   }, 1000);
+});
+onBeforeUnmount(() => {
+  clearInterval(intervalId);
+  return {
+    dateToday
+  };
 });
 
 </script>
 
 <template>
-    <Navbar />
-    <div class="mt-5 text-center">
-      <h1
-        class="mb-4 text-4xl text-center font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-        Badge her for gotham !</h1>
-        <RouterLink to="/WorkingTime"
-        class="rounded-md bg-yellow-300 w-48 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-neutral-500 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2">
-        Manage Bat Time User
-      </RouterLink>
-      <div class="mx-auto w-full flex justify-center">
-        <button @click="addNewDate(currentUserModel.id)" class="batman-button">
-          <div class="batman-timer">
-          </div>
-        </button>
-      </div>
-      <h2 class="text-white text-2xl font-bold mt-5 today-date text-center">{{ dateToday }}</h2>
+  <Navbar />
+  <div class="mt-5 text-center">
+    <h1
+      class="mb-4 text-4xl text-center font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+      Badge her for gotham !</h1>
+    <RouterLink to="/WorkingTime"
+      class="rounded-md bg-yellow-300 w-48 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-neutral-500 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2">
+      Manage Bat Time User
+    </RouterLink>
+    <div class="mx-auto w-full flex justify-center">
+      <button @click="addNewDate(currentUserModel.id)" class="batman-button">
+        <div class="batman-timer">
+        </div>
+      </button>
     </div>
+    <h2 class="text-white text-2xl font-bold mt-5 today-date text-center">{{ dateToday }}</h2>
+  </div>
 </template>
 
 <style scoped>
@@ -113,6 +116,7 @@ main {
   animation: rotate-scale-up 1s linear both;
   transition: all ease-in-out 0.2s;
 }
+
 @keyframes rotate-scale-up {
   0% {
     transform: scale(1) rotateZ(0)
@@ -141,20 +145,23 @@ main {
   top: 150px;
   left: 10px;
 }
-.batman-button{
+
+.batman-button {
   position: relative;
   top: 100px;
   transition: all ease-in-out 0.2s;
 }
-.batman-button:hover{
+
+.batman-button:hover {
   transform: scale(1.1);
 }
+
 .batman-button:active:hover {
   transform: scale(1);
   transition: all ease-in-out 0.1s;
 }
 
-.today-date{
+.today-date {
   position: relative;
   top: 100px;
 }
