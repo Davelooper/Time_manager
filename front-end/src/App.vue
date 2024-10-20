@@ -16,6 +16,7 @@ html, body, #app {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+
 }
 
 #app {

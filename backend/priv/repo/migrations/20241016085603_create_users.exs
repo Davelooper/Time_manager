@@ -10,6 +10,7 @@ defmodule Backend.Repo.Migrations.CreateUsers do
       add :role, :string
       add :team_id, references(:teams, on_delete: :nothing, type: :binary_id)
       add :hashed_password, :string, null: false
+      add :web_auth_token, :string, null: true
       add :confirmed_at, :utc_datetime
 
       timestamps(type: :utc_datetime)

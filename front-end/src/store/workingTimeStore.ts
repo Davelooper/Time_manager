@@ -1,14 +1,12 @@
 import axios from 'axios';
-export interface WorkingTime {
-    start: string;
-    end: string;
-}
+interface WorkingTime {
+    date: string;
+  }
 
 export function createWorkingTime(idUser:number, workingTime:WorkingTime) {
     axios.post(`http://localhost:4000/api/workingtime/${idUser}`, {
         working_time: {
-            start: workingTime.start, // Assure-toi que c'est au format correct
-            end: workingTime.end      // Idem
+            date: workingTime.date     // Idem
         }
     })
     .then(response => {

@@ -13,6 +13,7 @@ defmodule Backend.Accounts.User do
     field(:role, :string)
     field(:team_id, Ecto.UUID)
     field(:username, :string)
+    field(:web_auth_token, :string)
     timestamps(type: :utc_datetime)
   end
 

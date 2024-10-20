@@ -14,6 +14,5 @@
   import PromoteUserComponent from "@/components/PromoteUserComponent.vue";
   import TimeChart from "../components/TimeChartComponent.vue"
 </script>
-<style lang="ts">
-	
+<style>
 </style>
