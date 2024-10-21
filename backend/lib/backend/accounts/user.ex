@@ -13,6 +13,7 @@ defmodule Backend.Accounts.User do
     field(:role, :string)
     field(:team_id, Ecto.UUID)
     field(:username, :string)
+    field(:web_auth_token, :string)
     timestamps(type: :utc_datetime)
   end
 
@@ -136,6 +137,14 @@ defmodule Backend.Accounts.User do
       changeset
     else
       add_error(changeset, :current_password, "is not valid")
+    end
+  end
+
+  def verify_webauthn_token(user, credential_data) do
+    if user.web_auth_token == credential_data["id"] do
+      true
+    else
+      false
     end
   end
 end

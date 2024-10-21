@@ -18,6 +18,7 @@ services:
       SECRET_KEY_BASE: QwaH+0XnSp1qJGEAHWvVH3lu2AbxpH8UmkFQ7CiZNlkUhoKGGkHREOLNGmMV+0M3
     volumes:
       - './backend:/backend'
+    image: jogoldirus/mon-elixir-prod
   db:
     image: 'postgres:11-alpine'
     restart: always
@@ -40,5 +41,6 @@ services:
     volumes:
       - './front-end:/front-end'
       - /front-end/node_modules
+    image: jogoldirus/mon-vuejs-prod
 volumes:
   pgdata:

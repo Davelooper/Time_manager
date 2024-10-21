@@ -1,108 +1,110 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import i18n from '@/store/i18n';
 import router from '@/router';
 import Navbar from '@/components/Navbar.vue';
-import {createWorkingTime} from'../store/workingTimeStore';
-import { idText } from 'typescript';
+import { createWorkingTime } from '../store/workingTimeStore';
 
 interface WorkingTime {
-    start: string;
-    end: string;
+  date: string;
 }
+interface CurrentUser {
+  id: number;
+}
+
 const workingTimeModel = ref<WorkingTime>({
-  start: '',
-  end:'',
+  date: '',
+});
+const currentUserModel = ref<CurrentUser>({
+  id: 0,
 });
 
 
-function updateTime() {
-  console.log("Date et heure mises à jour :");
+
+
+
+function formatDateTime() {
+  const parsedDate = new Date();
+  const year = parsedDate.getFullYear();
+  const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+  const day = String(parsedDate.getDate()).padStart(2, '0');
+  const hours = String(parsedDate.getHours()).padStart(2, '0');
+  const minutes = String(parsedDate.getMinutes()).padStart(2, '0');
+  const seconds = String(parsedDate.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+function addNewDate(iduser: number) {
+  workingTimeModel.value.date = formatDateTime();
+  console.log(workingTimeModel.value.date, iduser)
+  // j envoi ma requete 
+  // createWorkingTime(iduser, workingTimeModel.value)
 
-function formatDateTime(date: string) {
-    const parsedDate = new Date(date);
-    const year = parsedDate.getFullYear();
-    const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-    const day = String(parsedDate.getDate()).padStart(2, '0');
-    const hours = String(parsedDate.getHours()).padStart(2, '0');
-    const minutes = String(parsedDate.getMinutes()).padStart(2, '0');
-    const seconds = String(parsedDate.getSeconds()).padStart(2, '0');
-
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  const currentTime = new Date().toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
 }
-function isDateInFuture(date: string): boolean {
-  const currentDate = new Date();  // Date actuelle
-  const inputDate = new Date(date); // Date fournie en entrée
-
-  return inputDate > currentDate;  // Retourne vrai si la date fournie est dans le futur
-}
-
-function addNewDate(iduser: number){
-  workingTimeModel.value.start = formatDateTime(workingTimeModel.value.start);
-  workingTimeModel.value.end = formatDateTime(workingTimeModel.value.end);
-
-  console.log(workingTimeModel.value.start)
-  console.log(workingTimeModel.value.end)
-
-  if (isDateInFuture(workingTimeModel.value.start) || isDateInFuture(workingTimeModel.value.end)) {
-    console.error("La date de début ou de fin ne peut pas être dans le futur.");
-
-    return alert(`You can't point for tomarow Batman is watching you`);  
-  }
-  createWorkingTime(iduser, workingTimeModel.value)
-
-  }
 
 const showForm = ref(false);
+const dateToday = ref('');
+const optionsDate: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+const optionsTime: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+
+const updateDateTime = () => {
+  const today = new Date();
+  dateToday.value = `${today.toLocaleDateString('en-US', optionsDate)} - ${today.toLocaleTimeString('en-US', optionsTime)}`;
+};
+let intervalId: number;
 onMounted(() => {
+  const today = new Date();
+  updateDateTime();
+  intervalId = window.setInterval(updateDateTime, 1000); // Actualiser chaque seconde
+
+
+  dateToday.value = `${today.toLocaleDateString('en-US', optionsDate)} - ${today.toLocaleTimeString('en-US', optionsTime)}`;
+
   setTimeout(() => {
     showForm.value = true;
-  }, 1000); 
+  }, 1000);
 });
+onBeforeUnmount(() => {
+  clearInterval(intervalId);
+  return {
+    dateToday
+  };
+});
+
 </script>
 
 <template>
-  <div>
-    <Navbar />
-    <div class="mt-5">
-      <h1 class="mb-4 text-4xl text-center font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Badge her for gotham !</h1>
-      <div class="batman-timer mx-auto ">
-        <form @submit.prevent="addNewDate(1)" class="form-gotham" id="gothamTime"v-if="showForm">
-          <div class="date-picker flex flex-wrap justify-evenly w-3/4 mx-auto">
-            <div class="workingTime w-1/2">
-              <label for="starting">Start</label>
-              <input type="datetime-local" @change="updateTime" v-model="workingTimeModel.start" id="start-time" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-cyan-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="09:00" max="18:00" value="00:00" required />
-            </div>
-            <div class="workingTime w-1/2">
-              <label for="ending">End</label>
-              <input type="datetime-local" @change="updateTime" v-model="workingTimeModel.end" id="start-time" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="09:00" max="18:00" value="00:00" required />
-            </div>
-            <button class="w-1/3 mt-5 rounded-md bg-yellow-300 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-neutral-500 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2" type="submit">
-            Valider
-          </button>
-          </div>
-        </form>
-        <div class="w-80 mx-auto bat-pos text-center" v-if="showForm">
-        <RouterLink to="/WorkingTime" class="rounded-md bg-yellow-300 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-neutral-500 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2">
-          Manage Bat Time User 
-        </RouterLink>
-      </div>
-      </div>
+  <Navbar />
+  <div class="mt-5 text-center">
+    <h1
+      class="mb-4 text-4xl text-center font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+      Badge her for gotham !</h1>
+    <RouterLink to="/WorkingTime"
+      class="rounded-md bg-yellow-300 w-48 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-neutral-500 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2">
+      Manage Bat Time User
+    </RouterLink>
+    <div class="mx-auto w-full flex justify-center">
+      <button @click="addNewDate(currentUserModel.id)" class="batman-button">
+        <div class="batman-timer">
+        </div>
+      </button>
     </div>
-  
+    <h2 class="text-white text-2xl font-bold mt-5 today-date text-center">{{ dateToday }}</h2>
   </div>
 </template>
 
 <style scoped>
-main{
+main {
   background-color: #161616 !important;
+  overflow: hidden;
 }
-.bat-pos{
-  position: relative;
-  top: 300px;
-}
+
 
 .batman-timer {
   background-image: url(../assets/img/batman.png);
@@ -112,9 +114,7 @@ main{
   width: 40rem;
   height: 400px;
   animation: rotate-scale-up 1s linear both;
-  position: relative;
-  top: 200px;
-  transition: all ease-in-out 0.2s ;
+  transition: all ease-in-out 0.2s;
 }
 
 @keyframes rotate-scale-up {
@@ -146,4 +146,23 @@ main{
   left: 10px;
 }
 
-</style>  
+.batman-button {
+  position: relative;
+  top: 100px;
+  transition: all ease-in-out 0.2s;
+}
+
+.batman-button:hover {
+  transform: scale(1.1);
+}
+
+.batman-button:active:hover {
+  transform: scale(1);
+  transition: all ease-in-out 0.1s;
+}
+
+.today-date {
+  position: relative;
+  top: 100px;
+}
+</style>

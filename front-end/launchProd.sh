@@ -1,18 +1,25 @@
 #!/bin/sh
-# set -e  # S'interrompre en cas d'erreur
+# set -e  # Arrête le script en cas d'erreur
 
 echo "Répertoire actuel de PROD : "
 ls  # Liste les fichiers du répertoire
-# Recuperer les dependances
-echo "Installation des dépendances ..."
+
+# Suppression de l'ancien build
+echo "Suppression de l'ancien build..."
+rm -rf dist
+
+# Installation des dépendances globales
+echo "Installation des dépendances globales..."
 npm install -g serve
-npm install run-p
+
+# Installation des dépendances du projet
+echo "Installation des dépendances du projet..."
 npm install
 
-# Démarrer le serveur Phoenix
-echo "Build ..."
-npm run build
+# Lancement du build de production
+echo "Lancement du build de production..."
+npm run build || { echo 'Le build a échoué, arrêt du script'; exit 1; }
 
-# Démarrer le serveur Vue.js
-echo "Démarrage du serveur ..."
+# Démarrage du serveur Vue.js seulement si le build est réussi
+echo "Démarrage du serveur Vue.js..."
 serve -s dist -l 8000

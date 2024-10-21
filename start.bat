@@ -12,7 +12,7 @@ if "%SERVICE_ENV%" == "PROD" (
     echo Lancement de l'environnement de production...
 
     REM Arrêter et supprimer les conteneurs associés à docker-compose.prod.yaml
-    docker-compose -fv docker-compose.prod.yaml --env-file .env down
+    docker-compose -f docker-compose.prod.yaml --env-file .env down
 
     REM Supprimer les images associées aux services de docker-compose.prod.yaml
     FOR /F "tokens=*" %%i IN ('docker-compose -f docker-compose.prod.yaml config --services') DO docker rmi %%i
