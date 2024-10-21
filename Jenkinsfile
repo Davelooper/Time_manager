@@ -34,11 +34,11 @@ pipeline {
         }
       }
     }
-    post {
-        always {
-            sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} down --volumes || true'
-        }
-    }
+  }
+  post {
+      always {
+          sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} down --volumes || true'
+      }
   }
 
 }
