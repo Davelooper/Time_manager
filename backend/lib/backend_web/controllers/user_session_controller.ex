@@ -42,4 +42,31 @@ defmodule BackendWeb.UserSessionController do
         end
     end
   end
+
+  def create_webauthn_session(conn, %{"token" => %{"code" => token}}) do
+    case Accounts.get_user_by_webauthn_token(token) do
+      {:ok, user} ->
+        case Token.generate_token(%{
+               "id" => user.id,
+               "email" => user.email,
+               "role" => user.role,
+               "team_id" => user.team_id,
+               "username" => user.username
+             }) do
+          {:ok, jwt_token} ->
+            json(conn, %{success: true, token: jwt_token})
+
+          {:error, reason} ->
+            conn
+            |> put_status(:internal_server_error)
+            |> json(%{success: false, message: "Error generating token: #{reason}"})
+        end
+
+      {:error, _reason} ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{success: false, message: "Invalid WebAuthn token"})
+    end
+  end
+
 end
