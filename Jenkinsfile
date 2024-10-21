@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    GITHUB_CREDENTIALS_ID = 'github-credentials'
+    GITHUB_CREDENTIALS_ID = 'github_credentials'
     DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
     DOCKER_COMPOSE_DEV = 'docker-compose.dev.yaml'
     DOCKER_COMPOSE_PROD = 'docker-compose.prod.yaml'
