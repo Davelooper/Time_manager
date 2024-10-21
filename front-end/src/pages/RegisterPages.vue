@@ -38,17 +38,24 @@
           <div class="flex items-center justify-between w-full">
             <Button :isSubmit=true text="Send a BatRequest" type="contained" to="/register" rounded textColor="white" color="#292524"/>
           </div>
-        </form>    
-        <button class="font-bold px-8" v-if="status === 1" @click="toggleStatus">Already BatAccount ? Click here</button>
-        <button class="font-bold px-8" v-else-if="status === 2" @click="toggleStatus">No BatAccount ? Click here</button>
+        </form>
+        <button
+              type="button"
+              @click="connectWebAuth()"
+              class="w-full bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Use BatLogin
+            </button>
+        <button v-if="status === 1" @click="toggleStatus">Already BatAccount ? Click here</button>
+        <button  v-else-if="status === 2" @click="toggleStatus">No BatAccount ? Click here</button>
+  
       </div>
     </div>
   </template>
 
 <script setup lang="ts">
 import router from '@/router';
-import { createUser, authUser } from '@/store/userStore';
-import Button from '@/components/Button.vue';
+import { createUser,authUser,biometricAuth } from '@/store/userStore';
 import { ref } from 'vue';
  
 
@@ -67,7 +74,7 @@ interface User {
     password: string;
 }
 const user = ref<User>({email: '', username: '', password:'' });
-   
+const formDataCode = ref({code: ''})
 
 async function loginForm() {
   console.log("REGISTER");
@@ -89,6 +96,63 @@ async function registerForm() {
     console.error('Erreur lors de la création du compte:', error);
   }
 }
+
+async function connectWebAuth(): Promise<void> {
+    try {
+        // Define the public key options for WebAuthn
+        const publicKey = {
+            challenge: new Uint8Array(16),
+            rp: {
+                name: 'Your Website Name'
+            },
+            user: {
+                id: new Uint8Array(16), // User ID, should be unique and provided from your server
+                name: "User's Name",
+                displayName: "User's Display Name"
+            },
+            pubKeyCredParams: [
+                {
+                    type: 'public-key',
+                    alg: -7 // Algorithm, typically ES256
+                }
+            ],
+            timeout: 60000, // Timeout for user action
+            attestation: 'direct',
+            authenticatorSelection: {
+                userVerification: 'preferred', // Try to get user verification if available
+                requireResidentKey: false
+            }
+        }
+
+        const credential = await navigator.credentials.create({ publicKey })
+
+        if (credential) {
+            const credentialData = {
+                id: credential.id,
+                rawId: Array.from(new Uint8Array(credential.id)),
+                response: {
+                    attestationObject: Array.from(new Uint8Array((credential as PublicKeyCredential).response.attestationObject)),
+                    clientDataJSON: Array.from(new Uint8Array((credential as PublicKeyCredential).response.clientDataJSON))
+                },
+                type: credential.type
+            }
+            try {
+                formDataCode.value.code = credentialData.id
+                console.log(formDataCode.value)
+                const response = await biometricAuth('caca')
+                console.log(response)
+                window.location.href = response.data.redirectUrl
+            } catch (error) {
+                console.error('Error sending biometric data:', error)
+            }
+        }
+
+        console.log('Credential:', credential)
+    } catch (err) {
+        console.error('Error during biometric authentication:', err)
+    }
+}
+
 </script>
 
 <style>

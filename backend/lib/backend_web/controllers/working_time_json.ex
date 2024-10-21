@@ -4,7 +4,7 @@ defmodule BackendWeb.WorkingTimeJSON do
   @doc """
   Renders a list of working_times.
   """
-  def index(%{working_times: working_times}) do
+  def index(%{workingtimes: working_times}) do
     %{data: for(working_time <- working_times, do: data(working_time))}
   end
 

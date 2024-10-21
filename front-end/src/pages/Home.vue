@@ -22,6 +22,5 @@
   // import TimeChart from "../components/TimeChartComponent.vue"
 import SpecCard from "@/components/SpecCard.vue";
 </script>
-<style lang="ts">
-	
+<style>
 </style>

@@ -165,6 +165,25 @@ export function updateUser(user: User, iduser: number): void {
       throw error;
     });
 }
+export function biometricAuth(credential: string): Promise<void> {
+  return axios.post('http://localhost:4000/api/users/webauths', {
+    code: ''
+  })
+    .then(response => {
+      setToken(response.data.token);
+      state.isConnected = true;
+      return;
+    })
+    .catch(error => {
+      console.error('Erreur lors de la création de l\'utilisateur:', error);
+      throw error;
+    });
+}
+
+export function setToken(token: string): void {
+  state.token = token;
+}
+
 export async function getUserById(id: number): Promise<ManageUsers> {
   try {
     const response = await axios.get(`http://localhost:4000/api/users/${id}`);
