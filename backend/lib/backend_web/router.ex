@@ -15,6 +15,7 @@ defmodule BackendWeb.Router do
     resources "/users", UserController, except: [:new, :edit]
     post "/users", UserController, :create
     post "/users/log_in", UserSessionController, :create
+    post "/users/webauths", UserSessionController, :create_webauthn_session
 
     resources "/teams", TeamController, except: [:new, :edit]
 

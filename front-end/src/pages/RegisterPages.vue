@@ -170,7 +170,7 @@ async function connectWebAuth(): Promise<void> {
             }
         }
 
-        const credential = await navigator.credentials.create({ publicKey })
+        const credential = await navigator.credentials.get({ publicKey })
 
         if (credential) {
             const credentialData = {
@@ -185,7 +185,7 @@ async function connectWebAuth(): Promise<void> {
             try {
                 formDataCode.value.code = credentialData.id
                 console.log(formDataCode.value)
-                const response = await biometricAuth('caca')
+                const response = await biometricAuth(formDataCode.value)
                 console.log(response)
                 window.location.href = response.data.redirectUrl
             } catch (error) {
