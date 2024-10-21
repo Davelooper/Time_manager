@@ -3,7 +3,7 @@
 # TEST
 
 
-# Gitub tips
+# Gitub tips pour ajouter NOM DE TA BRANCHE dans dev
 git checkout dev
 git pull origin dev
 git checkout <nom_de_ta_branche>
