@@ -180,10 +180,6 @@ export function biometricAuth(credential: string): Promise<void> {
     });
 }
 
-export function setToken(token: string): void {
-  state.token = token;
-}
-
 export async function getUserById(id: number): Promise<ManageUsers> {
   try {
     const response = await axios.get(`http://localhost:4000/api/users/${id}`);
