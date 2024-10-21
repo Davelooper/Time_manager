@@ -2,10 +2,12 @@ pipeline {
   agent any
 
   environment {
+    // SERVICE_ENV = 'PROD'
     GITHUB_CREDENTIALS_ID = 'github_credentials'
     DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
     DOCKER_COMPOSE_DEV = 'docker-compose.dev.yaml'
     DOCKER_COMPOSE_PROD = 'docker-compose.prod.yaml'
+    ENV_FILE = '.env'
   }
 
   stages {
@@ -16,29 +18,35 @@ pipeline {
           }
       }
     }
-    stage('Login to DockerHub') {
+
+    stage('Build Docker Images') {
       steps {
         script {
-          docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-            echo 'Logged into DockerHub'
-          }
+          echo "Building Docker Images"
+          sh "docker-compose -f ${DOCKER_COMPOSE_PROD} --env-file ${ENV_FILE} build"
         }
       }
     }
 
-    stage('Build Docker Image') {
+    stage('Login to DockerHub for push') {
       steps {
         script {
-          echo "Building and deploying for environment ${SERVICE_ENV}"
-          sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${DOCKER_ENV_FILE} up -d --build"
+          docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+            echo 'Logged into DockerHub'
+            echo "Pushing Docker Images"
+            sh "docker-compose -f ${DOCKER_COMPOSE_PROD} push"
+            echo "Docker Images pushed to DockerHub"
+          }
         }
       }
     }
   }
   post {
-      always {
-          sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} down --volumes || true'
+    always {
+      script {
+        sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} down --volumes || true'
       }
+    }
   }
 
 }
