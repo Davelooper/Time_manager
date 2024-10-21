@@ -91,14 +91,28 @@ export function authUser(user: User): Promise<void> {
       throw error;
     });
 }
-
+// TO DO ne pas faire de <any>
+export function biometricAuth(credential: string): Promise<any> {
+  return axios.post('http://localhost:4000/api/users/webauths', {
+    token: credential // Envoi direct du token   
+  })
+    .then(response => {
+      console.log(response.data.token); // Voir le token JWT dans la réponse
+      setToken(response.data.token); // Sauvegarde le token dans l'état
+      state.isConnected = true; // Modifie l'état de connexion
+      return response; // Retourne la réponse complète
+    })
+    .catch(error => {
+      console.error('Erreur lors de l\'authentification biométrique:', error);
+      throw error; // Lève l'erreur
+    });
+}
 // Fonction pour déconnecter l'utilisateur
 export function logoutUser(): void {
   state.isConnected = false;
   deleteToken();  // Supprime le token du localStorage
 }
 
-// Fonction pour stocker le token dans localStorage
 export function setToken(token: string): void {
   state.token = token;
   localStorage.setItem('token', token);
@@ -159,20 +173,6 @@ export function updateUser(user: User, iduser: number): void {
   })
     .then(response => {
       console.log('Utilisateur manager:', response.data);
-    })
-    .catch(error => {
-      console.error('Erreur lors de la création de l\'utilisateur:', error);
-      throw error;
-    });
-}
-export function biometricAuth(credential: string): Promise<void> {
-  return axios.post('http://localhost:4000/api/users/webauths', {
-    credential: { id: credential }  // Clé correcte pour correspondre à l'Elixir controller
-  })
-    .then(response => {
-      setToken(response.data.token);
-      state.isConnected = true;
-      return;
     })
     .catch(error => {
       console.error('Erreur lors de la création de l\'utilisateur:', error);

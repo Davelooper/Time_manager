@@ -18,7 +18,7 @@ defmodule BackendWeb.Router do
     post("/users/log_in", UserController, :userLogin)
     post("/users", UserController, :create)
     resources("/users", UserController, except: [:new, :edit])
-    post "/users/webauths", UserSessionController, :create_webauthn_session
+    post("/users/webauths", UserSessionController, :create_webauthn_session)
 
     resources("/teams", TeamController, except: [:new, :edit])
 
