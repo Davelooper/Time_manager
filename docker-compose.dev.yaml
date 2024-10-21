@@ -1,12 +1,13 @@
 services:
   elixir:
-    build: 
+    build:
       dockerfile: Dockerfile.dev
       context: ./backend
     ports:
       - "4000:4000"
     depends_on:
       - db
+    image: jogoldirus/mon-elixir-dev
     environment:
       POSTGRES_USER: ${POSTGRES_USER_DEV}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_DEV}
@@ -30,7 +31,6 @@ services:
       - '5432:5432'
     volumes:
       - 'pgdata:/var/lib/postgresql/data'
-
   vuejs:
     build:
       context: ./front-end
@@ -41,5 +41,6 @@ services:
     volumes:
       - './front-end:/front-end'
       - /front-end/node_modules
+    image: jogoldirus/mon-vuejs-dev
 volumes:
   pgdata:
