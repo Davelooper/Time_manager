@@ -139,13 +139,12 @@ defmodule Backend.Accounts.User do
       add_error(changeset, :current_password, "is not valid")
     end
   end
-end
 
-
-def verify_webauthn_token(user, credential_data) do
-  if user.web_auth_token == credential_data["id"] do
-    true
-  else
-    false
+  def verify_webauthn_token(user, credential_data) do
+    if user.web_auth_token == credential_data["id"] do
+      true
+    else
+      false
+    end
   end
 end

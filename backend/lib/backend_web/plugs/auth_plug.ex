@@ -9,28 +9,26 @@ defmodule BackendWeb.Plugs.AuthPlug do
   def init(default), do: default
 
   def call(conn, _default) do
-    # Extraire le token du header "Authorization"
     authorization = get_req_header(conn, "authorization") |> List.first()
 
-    # Vérifier que le header est présent et commence par "Bearer "
     case authorization do
       "Bearer " <> token ->
         # Vérifier si le token est valide en utilisant Token.verify/1
         case Token.verify(token) do
-          {:ok, user} ->
-            # Si le token est valide, on associe l'utilisateur au conn
-            assign(conn, :current_user, user)
+          # Si le token est valide
+          {:ok, claims} ->
+            # Assigner l'ID utilisateur extrait du token
+            conn
 
+          # Si le token est invalide
           {:error, reason} ->
-            # Si le token est invalide, on renvoie une erreur 401
             conn
             |> put_status(:unauthorized)
-            |> json(%{error: reason})
+            |> json(%{error: "Invalid token"})
             |> halt()
         end
 
       _ ->
-        # Si le header est absent ou mal formé, on renvoie une erreur 401
         conn
         |> put_status(:unauthorized)
         |> json(%{error: "Missing or invalid Authorization header"})
