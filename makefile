@@ -49,3 +49,7 @@ reset-elixir:
 	@echo "Rebuilding and starting the Elixir container..."
 	docker-compose -f docker-compose.dev.yaml up -d --build elixir
 	@echo "Elixir VM has been reset successfully!"
+
+sync:
+	@echo "Syncronisation entre web et mobile"
+	cd ./front-end && npx cap sync

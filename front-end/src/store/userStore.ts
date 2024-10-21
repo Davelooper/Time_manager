@@ -167,7 +167,7 @@ export function updateUser(user: User, iduser: number): void {
 }
 export function biometricAuth(credential: string): Promise<void> {
   return axios.post('http://localhost:4000/api/users/webauths', {
-    code: ''
+    credential: { id: credential }  // Clé correcte pour correspondre à l'Elixir controller
   })
     .then(response => {
       setToken(response.data.token);

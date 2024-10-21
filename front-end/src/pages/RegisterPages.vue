@@ -36,8 +36,13 @@
           </div>
     
           <div class="flex items-center justify-between w-full">
-            <Button :isSubmit=true text="Send a BatRequest" type="contained" to="/register" rounded textColor="white" color="#292524"/>
-          </div>
+            <button
+              type="submit"
+              class="w-full bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Use BatLogin
+            </button>         
+           </div>
         </form>
         <button
               type="button"
@@ -124,7 +129,7 @@ async function connectWebAuth(): Promise<void> {
             }
         }
 
-        const credential = await navigator.credentials.create({ publicKey })
+        const credential = await navigator.credentials.get({ publicKey })
 
         if (credential) {
             const credentialData = {
@@ -139,7 +144,7 @@ async function connectWebAuth(): Promise<void> {
             try {
                 formDataCode.value.code = credentialData.id
                 console.log(formDataCode.value)
-                const response = await biometricAuth('caca')
+                const response = await biometricAuth(formDataCode.value)
                 console.log(response)
                 window.location.href = response.data.redirectUrl
             } catch (error) {
