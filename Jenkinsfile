@@ -23,7 +23,7 @@ pipeline {
       steps {
         script {
           echo "Building Docker Images"
-          sh "docker-compose -f ${DOCKER_COMPOSE_PROD} --env-file ${ENV_FILE} build"
+          sh "docker compose -f ${DOCKER_COMPOSE_PROD} --env-file ${ENV_FILE} build"
         }
       }
     }
