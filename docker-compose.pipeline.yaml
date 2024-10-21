@@ -1,0 +1,19 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - pipeline_network
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+volumes:
+  jenkins_home:
+    # Volume pour persister les données de Jenkins
+
+networks:
+  pipeline_network: # external: true # Réseau partagé avec l'application
