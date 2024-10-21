@@ -40,7 +40,7 @@
               type="submit"
               class="w-full bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              Use BatLogin
+              Login
             </button>         
            </div>
         </form>
@@ -104,7 +104,6 @@ async function registerForm() {
 
 async function connectWebAuth(): Promise<void> {
     try {
-        // Define the public key options for WebAuthn
         const publicKey = {
             challenge: new Uint8Array(16),
             rp: {
