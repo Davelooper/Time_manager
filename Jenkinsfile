@@ -19,6 +19,23 @@ pipeline {
       }
     }
 
+    stage('Install Docker') {
+      steps {
+        script {
+          // Installer Docker sur l'agent Jenkins
+          echo "Installing Docker"
+          sh '''
+            # Mise à jour des paquets et installation de Docker
+            apt-get update
+            apt-get install -y docker.io
+
+            # Vérification de l'installation de Docker
+            docker --version
+          '''
+        }
+      }
+    }
+
     stage('Build Docker Images') {
       steps {
         script {
