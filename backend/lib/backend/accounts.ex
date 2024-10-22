@@ -492,4 +492,9 @@ defmodule Backend.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  def get_all_by_team_id(team_id) do
+    Repo.all(from(u in User, where: u.team_id == ^team_id))
+  end
+
 end
