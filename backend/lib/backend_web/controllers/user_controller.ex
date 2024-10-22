@@ -18,7 +18,7 @@ defmodule BackendWeb.UserController do
 
   plug(
     BackendWeb.Plugs.IsManagerOrUserInRequestPlug
-    when action in [:create, :get_by_user_id]
+    when action in [:show]
   )
 
   def index(conn, _params) do
@@ -45,7 +45,8 @@ defmodule BackendWeb.UserController do
   end
 
   def show(conn, params) do
-    id = Map.get(params, "id")
+    IO.inspect(params)
+    id = Map.get(params, "userId")
 
     if is_nil(id) do
       conn
@@ -57,7 +58,7 @@ defmodule BackendWeb.UserController do
     end
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
+  def update(conn, %{"userId" => id, "user" => user_params}) do
     user = Accounts.get_user!(id)
 
     with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
