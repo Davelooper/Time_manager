@@ -3,21 +3,17 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 import i18n from '@/store/i18n';
 import router from '@/router';
 import Navbar from '@/components/Navbar.vue';
-import { createWorkingTime } from '../store/workingTimeStore';
+import { createClocks } from '@/store/clocksStore';
+import {getDecodedToken} from '@/store/userStore';
 
-interface WorkingTime {
-    date: string;
-}
-interface CurrentUser {
-    id: number;
+interface Clocks {
+    time: string;
 }
 
-const workingTimeModel = ref<WorkingTime>({
-    date: '',
+const clocksModel = ref<Clocks>({
+    time: ''
 });
-const currentUserModel = ref<CurrentUser>({
-    id: 0,
-});
+
 
 function formatDateTime() {
     const parsedDate = new Date();
@@ -31,18 +27,80 @@ function formatDateTime() {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-function addNewDate(iduser: number) {
-    workingTimeModel.value.date = formatDateTime();
-    console.log(workingTimeModel.value.date, iduser)
-    // j envoi ma requete 
-    // createWorkingTime(iduser, workingTimeModel.value)
 
-    const currentTime = new Date().toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    });
+
+async function addNewDate() {
+    clocksModel.value.time = formatDateTime(); // Récupérer et formater l'heure actuelle
+    console.log(clocksModel);
+
+    // Fonction d'authentification WebAuthn
+    async function webauthnAuth(): Promise<boolean> {
+        try {
+            const publicKey = {
+                challenge: new Uint8Array(16), // Remplacez ceci par un vrai challenge unique
+                rp: {
+                    name: 'Your Website Name'
+                },
+                user: {
+                    id: new Uint8Array(16), // ID utilisateur unique
+                    name: "User's Name",
+                    displayName: "User's Display Name"
+                },
+                pubKeyCredParams: [
+                    {
+                        type: 'public-key',
+                        alg: -7 // Algorithm, typiquement ES256
+                    }
+                ],
+                timeout: 60000, // Délai d'attente
+                attestation: 'direct',
+                authenticatorSelection: {
+                    userVerification: 'preferred',
+                    requireResidentKey: false
+                }
+            };
+
+            // Essayer d'obtenir les informations d'identification
+            const credential = await navigator.credentials.get({ publicKey });
+
+            // Vérifiez si les informations d'identification ont été récupérées
+            if (credential) {
+                console.log('Authentification réussie:', credential);
+                return true; // L'authentification a réussi
+            } else {
+                console.error('Aucune information d\'identification récupérée.');
+                return false; // Aucune information d'identification récupérée
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'authentification WebAuthn:', error);
+            return false; // En cas d'erreur, renvoie false
+        }
+    }
+
+    // Vérification de l'authentification WebAuthn
+    const isAuthenticated = await webauthnAuth();
+    if (!isAuthenticated) {
+        console.error('Authentification WebAuthn échouée.');
+        return; // Arrêtez l'exécution si l'authentification échoue
+    }
+
+    // Récupération de l'ID utilisateur depuis le token
+    const decodedToken = getDecodedToken();
+    let iduser: string | null = null;
+
+    if (decodedToken && decodedToken.id) {
+        iduser = decodedToken.id;
+        console.log('ID de l\'utilisateur:', iduser);
+    }
+
+    // Création de l'horloge si l'ID utilisateur est récupéré
+    if (iduser) {
+        createClocks(clocksModel.value, iduser);
+    } else {
+        console.error("Impossible de récupérer l'ID utilisateur.");
+    }
 }
+
 
 const showForm = ref(false);
 const dateToday = ref('');
@@ -77,7 +135,7 @@ onBeforeUnmount(() => {
 <template>
     <div class="flex flex-col ">
     <h2 class="text-white text-2xl font-bold today-date text-center">{{ dateToday }}</h2>
-        <button @click="addNewDate(currentUserModel.id)" class="batman-button">
+        <button @click="addNewDate()" class="batman-button">
             <div class="batman-timer">
             </div>
         </button>

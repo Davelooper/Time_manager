@@ -17,8 +17,11 @@ defmodule BackendWeb.Router do
     get("/users/verifyToken", UserController, :userVerifyToken)
     post("/users/log_in", UserController, :userLogin)
     post("/users", UserController, :create)
-    resources("/users", UserController, except: [:new, :edit])
-    post("/users/webauths", UserSessionController, :create_webauthn_session)
+    # resources("/users", UserController, except: [:new, :edit])
+    post "/users/webauths", UserSessionController, :create_webauthn_session
+    get("/users/:userId", UserController, :show)
+    get("/users/team/:teamId", UserController, :get_all_by_team_id)
+    put("/users/:userId", UserController, :update)
 
     resources("/teams", TeamController, except: [:new, :edit])
 
