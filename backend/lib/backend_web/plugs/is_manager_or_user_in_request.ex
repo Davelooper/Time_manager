@@ -1,4 +1,4 @@
-defmodule BackendWeb.Plugs.IsManagerPlug do
+defmodule BackendWeb.Plugs.IsManagerOrUserInRequestPlug do
   import Plug.Conn
   import Phoenix.Controller
   alias Backend.Account.UserToken
@@ -9,7 +9,7 @@ defmodule BackendWeb.Plugs.IsManagerPlug do
 
   def call(conn, _default) do
     current_user = conn.assigns.current_user;
-    if current_user["role"] == "manager" || current_user["role"] == "admin" do
+    if current_user["role"] == "manager" || current_user["role"] == "admin" || conn.params["userId"] == current_user["id"] do
       conn
     else
       conn
