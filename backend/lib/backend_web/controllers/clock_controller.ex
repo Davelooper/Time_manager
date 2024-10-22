@@ -13,12 +13,12 @@ defmodule BackendWeb.ClockController do
 
   plug(
     BackendWeb.Plugs.IsManagerPlug
-    when action in []
+    when action in [:index, :update, :delete]
   )
 
   plug(
     BackendWeb.Plugs.IsManagerOrUserInRequestPlug
-    when action in [:create, :get_by_user_id, :index, :update, :delete]
+    when action in [:create, :get_by_user_id]
   )
 
   def index(conn, _params) do
