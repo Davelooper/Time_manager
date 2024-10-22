@@ -4,7 +4,7 @@ import Button from "../components/Button.vue"
 
 <template>
 	<main>
-		<div class="fixed h-full w-full flex flex-row items-center justify-center z-[100]">
+		<div class="fixed  h-full w-full flex flex-row items-center justify-center z-[100]">
 			<Button to="/home" text="Go to Dashboard" color="black" textColor="white" rounded />
 		</div>
 		<div class="sky">
