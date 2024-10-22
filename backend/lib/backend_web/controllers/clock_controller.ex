@@ -6,13 +6,27 @@ defmodule BackendWeb.ClockController do
 
   action_fallback BackendWeb.FallbackController
 
+  plug(
+    BackendWeb.Plugs.AuthPlug
+    when action in [:show, :create, :index, :update, :delete, :get_by_user_id]
+  )
+
+  plug(
+    BackendWeb.Plugs.IsManagerPlug
+    when action in [:index, :update, :delete]
+  )
+
+  plug(
+    BackendWeb.Plugs.IsManagerOrUserInRequestPlug
+    when action in [:create, :get_by_user_id]
+  )
+
   def index(conn, _params) do
     clocks = Clocks.list_clocks()
     render(conn, :index, clocks: clocks)
   end
 
   def create(conn, %{"userId" => id, "clock" => clock_params}) do
-    IO.inspect(clock_params)
     # user_id = String.to_integer(id)
     clock_params = Map.put(clock_params, "user_id", id)
     IO.inspect(clock_params)
@@ -55,6 +69,5 @@ defmodule BackendWeb.ClockController do
       render(conn, "index.json", clocks: clocks)
     end
   end
-
 
 end
