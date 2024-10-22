@@ -7,11 +7,25 @@ interface Role {
   id: number;
   name: string;
 }
+interface Team {
+  id: string;
+  username: string; // Le nom ou identifiant affichable de l'équipe
+}
 
 interface UserState {
   isConnected: boolean;
   token: string;
 }
+
+export interface User {
+  id?: string;
+  username: string;
+  email: string;
+  password: string;
+  team_id: string;
+  role?: Role;
+}
+
 export interface ManageUsers {
   data: any;
   id: number;
@@ -68,13 +82,7 @@ export function useUser() {
 }
 
 // Interface pour l'utilisateur
-export interface User {
-  id?: number;
-  username: string;
-  email: string;
-  password: string;
-  role?: Role;
-}
+
 
 // Fonction pour authentifier l'utilisateur
 export function authUser(user: User): Promise<void> {
@@ -146,11 +154,13 @@ function deleteToken(): void {
   state.token = '';
 }
 export function createUser(user: User): Promise<void> {
-  return axios.post('http://localhost:4000/api/user', {
+  console.log(user)
+  return axios.post('http://localhost:4000/api/users', {
     user: {
       email: user.email,
       password: user.password,
       username: user.username,
+      team_id: user.team_id
     }
   })
     .then(response => {
@@ -198,9 +208,10 @@ export async function getAllUser(): Promise<User> {
   }
 }
 
-export async function getAllUserByTeam(id: number): Promise<ManageUsers> {
+
+export async function getAllTeams(): Promise<Team[]> {
   try {
-    const response = await axios.get(`http://localhost:4000/api/teams/${id}`);
+    const response = await axios.get("http://localhost:4000/api/teams");
     return response.data; // Renvoie les données de l'utilisateur
   } catch (error) {
     console.error("Error fetching user:", error);
