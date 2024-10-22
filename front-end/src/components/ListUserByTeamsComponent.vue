@@ -18,14 +18,13 @@
 </template>
 
 <script>
-import { getAllUserByTeam } from '@/store/userStore';
 import { onBeforeMount, onMounted } from 'vue';
+import {getAllTeams} from '../store/userStore'
 
-let idTeam = 1
 console.log("test")
 onBeforeMount(async () => { 
   try {
-    let getTeam = await getAllUserByTeam(idTeam); 
+    let getTeam = await getAllTeams(); 
     console.log(getTeam, "GET TEAMS");
   } catch (error) {
     console.error("Erreur lors de la récupération de l'équipe :", error);

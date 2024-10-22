@@ -27,9 +27,64 @@ function formatDateTime() {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-function addNewDate() {
-    clocksModel.value.time = formatDateTime();
-    console.log(clocksModel)
+
+
+async function addNewDate() {
+    clocksModel.value.time = formatDateTime(); // Récupérer et formater l'heure actuelle
+    console.log(clocksModel);
+
+    // Fonction d'authentification WebAuthn
+    async function webauthnAuth(): Promise<boolean> {
+        try {
+            const publicKey = {
+                challenge: new Uint8Array(16), // Remplacez ceci par un vrai challenge unique
+                rp: {
+                    name: 'Your Website Name'
+                },
+                user: {
+                    id: new Uint8Array(16), // ID utilisateur unique
+                    name: "User's Name",
+                    displayName: "User's Display Name"
+                },
+                pubKeyCredParams: [
+                    {
+                        type: 'public-key',
+                        alg: -7 // Algorithm, typiquement ES256
+                    }
+                ],
+                timeout: 60000, // Délai d'attente
+                attestation: 'direct',
+                authenticatorSelection: {
+                    userVerification: 'preferred',
+                    requireResidentKey: false
+                }
+            };
+
+            // Essayer d'obtenir les informations d'identification
+            const credential = await navigator.credentials.get({ publicKey });
+
+            // Vérifiez si les informations d'identification ont été récupérées
+            if (credential) {
+                console.log('Authentification réussie:', credential);
+                return true; // L'authentification a réussi
+            } else {
+                console.error('Aucune information d\'identification récupérée.');
+                return false; // Aucune information d'identification récupérée
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'authentification WebAuthn:', error);
+            return false; // En cas d'erreur, renvoie false
+        }
+    }
+
+    // Vérification de l'authentification WebAuthn
+    const isAuthenticated = await webauthnAuth();
+    if (!isAuthenticated) {
+        console.error('Authentification WebAuthn échouée.');
+        return; // Arrêtez l'exécution si l'authentification échoue
+    }
+
+    // Récupération de l'ID utilisateur depuis le token
     const decodedToken = getDecodedToken();
     let iduser: string | null = null;
 
@@ -38,6 +93,7 @@ function addNewDate() {
         console.log('ID de l\'utilisateur:', iduser);
     }
 
+    // Création de l'horloge si l'ID utilisateur est récupéré
     if (iduser) {
         createClocks(clocksModel.value, iduser);
     } else {
