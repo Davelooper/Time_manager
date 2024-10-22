@@ -18,7 +18,9 @@ defmodule BackendWeb.Plugs.AuthPlug do
           # Si le token est valide
           {:ok, claims} ->
             # Assigner l'ID utilisateur extrait du token
+            IO.inspect(claims);
             conn
+            |> assign(:current_user, claims)
 
           # Si le token est invalide
           {:error, reason} ->
