@@ -1,6 +1,8 @@
 services:
   jenkins:
     image: jenkins/jenkins:lts
+    user: root
+    privileged: true
     container_name: jenkins
     ports:
       - "8080:8080"
@@ -13,6 +15,20 @@ services:
       - pipeline_network
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    command: >
+      bash -c "
+        # Installer les paquets nécessaires en tant que root
+        apt-get update &&
+        apt-get install -y docker.io &&
+        # Ajuster les permissions
+        groupadd -for docker &&
+        usermod -aG docker jenkins &&
+        chown -R jenkins:jenkins /var/jenkins_home &&
+        chown jenkins:docker /var/run/docker.sock &&
+        chmod 666 /var/run/docker.sock &&
+        # Exécuter Jenkins en tant qu'utilisateur 'jenkins'
+        su jenkins -c '/usr/local/bin/jenkins.sh'
+      "
 volumes:
   jenkins_home:
     # Volume pour persister les données de Jenkins
