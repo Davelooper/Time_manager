@@ -17,12 +17,12 @@ services:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
     command: >
       bash -c "
-        # Installer les paquets nécessaires en tant que root
+        # L'installation de Docker crée déjà le groupe 'docker', donc pas besoin de 'groupadd'
         apt-get update &&
         apt-get install -y docker.io &&
-        # Ajuster les permissions
-        groupadd -for docker &&
+        # Ajouter l'utilisateur 'jenkins' au groupe 'docker'
         usermod -aG docker jenkins &&
+        # Ajuster les permissions
         chown -R jenkins:jenkins /var/jenkins_home &&
         chown jenkins:docker /var/run/docker.sock &&
         chmod 666 /var/run/docker.sock &&

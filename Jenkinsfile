@@ -26,8 +26,8 @@ pipeline {
           echo "Installing Docker"
           sh '''
             # Mise à jour des paquets et installation de Docker
-            apt-get update
-            apt-get install -y docker.io
+            // apt-get update
+            // apt-get install -y docker.io
 
             # Vérification de l'installation de Docker
             docker --version
