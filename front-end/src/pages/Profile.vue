@@ -9,10 +9,8 @@
     <!-- Conteneur Time Pick -->
      <div class="flex flex-row gap-4">
        <div class="max-w-[600px] w-full flex flex-col md:flex-row items-center bg-gradient-to-br backdrop-blur-lg from-slate-800/10 to-slate-500/20 rounded-lg p-2 shadow-lg gap-6">
-         <!-- Image mascotte -->
           <div class="flex-col items-center justify-around md:flex-row flex">
             <img src="@/assets/mascotte.png" alt="User Icon" class="h-32 w-32 transition-transform duration-300 hover:scale-110" />
-            <!-- Texte et bouton de Time Pick -->
             <div class="flex flex-col items-center md:items-start text-center md:text-left gap-4">
               <h2 class="text-white  text-sm sm:text-lg md:text-3xl uppercase font-bold">You need to time pick</h2>
                <div class="flex flex-col md:flex-row flex-wrap items-center justify-between w-full">
@@ -20,9 +18,7 @@
                  <p class="text-gray-300  font-semibold text-5xl">{{new Date().toLocaleTimeString()}}</p>
                </div>
             </div>
-   
           </div>
-
        </div>
        <ProgressDays title="This Month" :data="[10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]"/>
      </div>
@@ -36,10 +32,11 @@
 
 <script setup lang="ts">
 import ProgressDays from "@/components/ProgressDays.vue";
+import RegisterUsersComponent from "@/components/RegisterUsersComponent.vue"
 import Button from "@/components/Button.vue";
 import Navbar from "../components/Navbar.vue"
 import { getToken } from "../store/userStore";
-// # define the props
+
 const props = defineProps({
   token: {
     type: String,
