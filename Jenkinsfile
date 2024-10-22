@@ -40,7 +40,7 @@ pipeline {
       steps {
         script {
           echo "Building Docker Images"
-          sh "docker compose -f ${DOCKER_COMPOSE_PROD} --env-file ${ENV_FILE} build"
+          sh "docker-compose -f ${DOCKER_COMPOSE_PROD} --env-file ${ENV_FILE} build"
         }
       }
     }
@@ -51,7 +51,7 @@ pipeline {
           docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
             echo 'Logged into DockerHub'
             echo "Pushing Docker Images"
-            sh "docker compose -f ${DOCKER_COMPOSE_PROD} push"
+            sh "docker-compose -f ${DOCKER_COMPOSE_PROD} push"
             echo "Docker Images pushed to DockerHub"
           }
         }
@@ -61,7 +61,7 @@ pipeline {
   post {
     always {
       script {
-        sh 'docker compose -f ${DOCKER_COMPOSE_FILE} down --volumes || true'
+        sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} down --volumes || true'
       }
     }
   }
