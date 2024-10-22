@@ -50,7 +50,7 @@ pipeline {
       }
     }
 
-    // Étape pour notifier GitHub du statut du build
+    // Étape pour notifier GitHub du statut du buil
     stage('Report Status to GitHub') {
       steps {
         script {
