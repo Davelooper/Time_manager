@@ -11,6 +11,19 @@ pipeline {
   }
 
   stages {
+    stage('Check Merge Branch') {
+      when {
+        anyOf {
+          branch 'main';
+          branch 'dev';
+          branch 'alex';
+        }
+      }
+      steps {
+        echo "Building only for merges into main from dev or alex."
+      }
+    }
+
     stage('Checkout') {
       steps {
           script {
