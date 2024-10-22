@@ -2,7 +2,6 @@ pipeline {
   agent any
 
   environment {
-    // SERVICE_ENV = 'PROD'
     GITHUB_CREDENTIALS_ID = 'github_credentials'
     DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
     DOCKER_COMPOSE_DEV = 'docker-compose.dev.yaml'
@@ -11,12 +10,15 @@ pipeline {
   }
 
   stages {
+    // Vérifier si on est sur la branche main et si le merge vient de 'dev' ou 'alex'
     stage('Check Merge Branch') {
       when {
-        anyOf {
-          branch 'main';
-          branch 'dev';
-          branch 'alex';
+        allOf {
+          branch 'main'
+          anyOf {
+            changeRequest(target: 'main', source: 'dev')
+            changeRequest(target: 'main', source: 'alex')
+          }
         }
       }
       steps {
@@ -26,17 +28,17 @@ pipeline {
 
     stage('Checkout') {
       steps {
-          script {
-              git credentialsId: "${GITHUB_CREDENTIALS_ID}", url: 'https://github.com/Davelooper/Time_manager', branch: 'main'
-          }
+        script {
+          git credentialsId: "${GITHUB_CREDENTIALS_ID}", url: 'https://github.com/Davelooper/Time_manager', branch: 'main'
+        }
       }
     }
 
     stage('Check Docker Versions') {
       steps {
         script {
-          echo "Installing Docker"
-          sh ''' docker --version docker compose --version'''
+          echo "Checking Docker versions"
+          sh '''docker --version && docker compose --version'''
         }
       }
     }
@@ -62,23 +64,13 @@ pipeline {
         }
       }
     }
-
-    // Étape pour notifier GitHub du statut du buil
-    // stage('Report Status to GitHub') {
-    //   steps {
-    //     script {
-    //       def status = currentBuild.result ?: 'SUCCESS'
-    //       githubNotify context: 'Jenkins', status: status
-    //     }
-    //   }
-    // }
   }
+
   post {
     always {
       script {
-        sh 'docker compose -f ${DOCKER_COMPOSE_FILE} down --volumes || true'
+        sh 'docker compose -f ${DOCKER_COMPOSE_PROD} down --volumes || true'
       }
     }
   }
-
 }
