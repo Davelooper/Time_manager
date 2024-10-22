@@ -19,21 +19,11 @@ pipeline {
       }
     }
 
-    stage('Install Docker') {
+    stage('Check Docker Versions') {
       steps {
         script {
-          // Installer Docker sur l'agent Jenkins
           echo "Installing Docker"
-          sh '''
-            # Mise à jour des paquets et installation de Docker
-            # apt-get update
-            # apt-get install -y docker.io
-
-            # Vérification de l'installation de Docker
-            docker --version
-            docker compose --version
-            docker-compose --version
-          '''
+          sh ''' docker --version docker compose --version'''
         }
       }
     }
