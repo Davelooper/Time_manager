@@ -105,7 +105,6 @@ export function biometricAuth(credential: string): Promise<any> {
     token: credential // Envoi direct du token   
   })
     .then(response => {
-      console.log(response.data.token); // Voir le token JWT dans la réponse
       setToken(response.data.token); // Sauvegarde le token dans l'état
       state.isConnected = true; // Modifie l'état de connexion
       return response; // Retourne la réponse complète
@@ -140,7 +139,6 @@ export function getDecodedToken(): any {
   }
 
   try {
-    // Décoder le token
     const decoded = jwtDecode(token);
     console.log("Token décodé:", decoded);
     return decoded;
@@ -209,6 +207,7 @@ export async function getAllUser(): Promise<User> {
     throw error;
   }
 }
+
 
 export async function getAllTeams(): Promise<Team[]> {
   try {
