@@ -3,21 +3,17 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 import i18n from '@/store/i18n';
 import router from '@/router';
 import Navbar from '@/components/Navbar.vue';
-import { createWorkingTime } from '../store/workingTimeStore';
+import { createClocks } from '@/store/clocksStore';
+import {getDecodedToken} from '@/store/userStore';
 
-interface WorkingTime {
-    date: string;
-}
-interface CurrentUser {
-    id: number;
+interface Clocks {
+    time: string;
 }
 
-const workingTimeModel = ref<WorkingTime>({
-    date: '',
+const clocksModel = ref<Clocks>({
+    time: ''
 });
-const currentUserModel = ref<CurrentUser>({
-    id: 0,
-});
+
 
 function formatDateTime() {
     const parsedDate = new Date();
@@ -31,18 +27,24 @@ function formatDateTime() {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-function addNewDate(iduser: number) {
-    workingTimeModel.value.date = formatDateTime();
-    console.log(workingTimeModel.value.date, iduser)
-    // j envoi ma requete 
-    // createWorkingTime(iduser, workingTimeModel.value)
+function addNewDate() {
+    clocksModel.value.time = formatDateTime();
+    console.log(clocksModel)
+    const decodedToken = getDecodedToken();
+    let iduser: string | null = null;
 
-    const currentTime = new Date().toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    });
+    if (decodedToken && decodedToken.id) {
+        iduser = decodedToken.id;
+        console.log('ID de l\'utilisateur:', iduser);
+    }
+
+    if (iduser) {
+        createClocks(clocksModel.value, iduser);
+    } else {
+        console.error("Impossible de récupérer l'ID utilisateur.");
+    }
 }
+
 
 const showForm = ref(false);
 const dateToday = ref('');
@@ -77,7 +79,7 @@ onBeforeUnmount(() => {
 <template>
     <div class="flex flex-col ">
     <h2 class="text-white text-2xl font-bold today-date text-center">{{ dateToday }}</h2>
-        <button @click="addNewDate(currentUserModel.id)" class="batman-button">
+        <button @click="addNewDate()" class="batman-button">
             <div class="batman-timer">
             </div>
         </button>

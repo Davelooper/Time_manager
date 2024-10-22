@@ -131,7 +131,6 @@ export function getDecodedToken(): any {
   }
 
   try {
-    // Décoder le token
     const decoded = jwtDecode(token);
     console.log("Token décodé:", decoded);
     return decoded;
