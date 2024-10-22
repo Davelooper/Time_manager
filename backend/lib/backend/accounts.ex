@@ -13,9 +13,13 @@ defmodule Backend.Accounts do
       when is_binary(email) and is_binary(password) do
     case Repo.get_by(User, email: email) do
       nil ->
+        IO.inspect(email);
+        IO.inspect(password);
         :error
 
       user ->
+        IO.inspect(email);
+        IO.inspect(password);
         if User.valid_password?(user, password) do
           {:ok, user}
         else
@@ -161,7 +165,9 @@ defmodule Backend.Accounts do
 
   """
   def get_user_by_email_and_password(email, password)
-      when is_binary(email) and is_binary(password) do
+    when is_binary(email) and is_binary(password) do
+    IO.inspect(email);
+    IO.inspect(password);
     user = Repo.get_by(User, email: email)
 
     if user && User.valid_password?(user, password) do
@@ -486,4 +492,9 @@ defmodule Backend.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  def get_all_by_team_id(team_id) do
+    Repo.all(from(u in User, where: u.team_id == ^team_id))
+  end
+
 end

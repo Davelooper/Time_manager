@@ -5,8 +5,8 @@ import ClockManager from '@/pages/ClockManagerPages.vue'
 import User from '@/pages/UserPages.vue'
 import WorkingTime from '@/pages/WorkingTimePages.vue'
 import WorkingTimes from '@/pages/WorkingTimesPages.vue'
-import Register from '@/pages/RegisterPages.vue'
 import Home from '@/pages/Home.vue'
+import LoginPage from '@/pages/LoginPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,7 +39,7 @@ const router = createRouter({
     {
       path: '/auth',
       name: 'auth',
-      component: Register
+      component: LoginPage
     },
     {
       path: '/WorkingTime',
