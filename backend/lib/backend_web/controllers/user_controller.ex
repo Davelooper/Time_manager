@@ -8,7 +8,17 @@ defmodule BackendWeb.UserController do
 
   plug(
     BackendWeb.Plugs.AuthPlug
-    when action in [:show, :index, :indexAll, :update, :delete, :userVerifyToken]
+    when action in [:show, :create, :index, :update, :delete, :get_by_user_id]
+  )
+
+  plug(
+    BackendWeb.Plugs.IsManagerPlug
+    when action in [:create, :update, :delete]
+  )
+
+  plug(
+    BackendWeb.Plugs.IsManagerOrUserInRequestPlug
+    when action in [:create, :get_by_user_id]
   )
 
   def index(conn, _params) do
