@@ -14,7 +14,6 @@
    
           </div>
 
-       </div>
        <ProgressDays title="This Month" :data="[10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]"/>
      </div>
 
@@ -22,11 +21,14 @@
     <div class="flex flex-col md:flex-row justify-between gap-6">
         <ProgressDays title="This Week" :data="[10, 20, 30, 40, 50, 60, 70]"/>
     </div>
+  </div>
+  
+<ListUserByTeamsComponent />
 </template>
 
 <script setup lang="ts">
 import ProgressDays from "@/components/ProgressDays.vue";
-import Button from "@/components/Button.vue";
+import ListUserByTeamsComponent from "@/components/ListUserByTeamsComponent.vue"
 import Navbar from "../components/Navbar.vue"
 import { getToken } from "../store/userStore";
 import BatPing from "../components/BatPing.vue"

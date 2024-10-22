@@ -198,4 +198,13 @@ export async function getAllUser(): Promise<User> {
     throw error;
   }
 }
-// Exemple d'autres fonctions API...
+
+export async function getAllUserByTeam(id: number): Promise<ManageUsers> {
+  try {
+    const response = await axios.get(`http://localhost:4000/api/teams/${id}`);
+    return response.data; // Renvoie les données de l'utilisateur
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+}
