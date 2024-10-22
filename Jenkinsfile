@@ -13,13 +13,7 @@ pipeline {
     // Vérifier si on est sur la branche main et si le merge vient de 'dev' ou 'alex'
     stage('Check Merge Branch') {
       when {
-        allOf {
-          branch 'main'
-          anyOf {
-            changeRequest(target: 'main', source: 'dev')
-            changeRequest(target: 'main', source: 'alex')
-          }
-        }
+        branch 'main'
       }
       steps {
         echo "Building only for merges into main from dev or alex."
