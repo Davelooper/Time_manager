@@ -51,14 +51,14 @@ pipeline {
     }
 
     // Étape pour notifier GitHub du statut du buil
-    stage('Report Status to GitHub') {
-      steps {
-        script {
-          def status = currentBuild.result ?: 'SUCCESS'
-          githubNotify context: 'Jenkins', status: status
-        }
-      }
-    }
+    // stage('Report Status to GitHub') {
+    //   steps {
+    //     script {
+    //       def status = currentBuild.result ?: 'SUCCESS'
+    //       githubNotify context: 'Jenkins', status: status
+    //     }
+    //   }
+    // }
   }
   post {
     always {
