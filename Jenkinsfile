@@ -59,27 +59,31 @@ pipeline {
       }
     }
     stage('Start Database for Test') {
-      steps {
-        script {
-          echo "Env files"
-          sh "cat ${ENV_FILE}"
-          // Démarrer le conteneur Postgres
-          echo "Starting Postgres container for tests"
-          sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
+    steps { 
+      script {
+        echo "Env files"
+        sh "cat ${ENV_FILE}"  // Affiche le contenu du fichier .env pour vérifier
 
-          // Attendre que Postgres soit prêt
-          echo "Waiting for Postgres to be ready..."
-          sh '''
-            until docker exec \$(docker-compose -f ${DOCKER_COMPOSE_FILE} ps -q db) pg_isready -h localhost -p 5432 -U \${POSTGRES_USER}; do
-              echo "Waiting for Postgres..."
-              sleep 2
-            done
-            sleep 10
-            echo "Postgres is ready!"
-          '''
-        }
+        echo "Starting Postgres container for tests"
+        sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
+
+        // Vérification des variables d'environnement utilisées par le conteneur db
+        echo "Checking environment variables for db:"
+        sh "docker-compose -f ${DOCKER_COMPOSE_FILE} exec db env"
+
+        // Attendre que Postgres soit prêt
+        echo "Waiting for Postgres to be ready..."
+        sh """
+          until docker exec \$(docker-compose -f ${DOCKER_COMPOSE_FILE} ps -q db) pg_isready -h localhost -p 5432 -U \${${POSTGRES_USER}}; do
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
+          echo "Postgres is ready!"
+        """
       }
     }
+  }
+
     stage('Compile Elixir & Elixir Deps') {
       steps {
         script {
