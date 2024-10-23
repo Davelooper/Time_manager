@@ -1,7 +1,7 @@
 <template>
   <Navbar />
 
-    <h1 class="text-2xl md:text-4xl font-bold mb-4 p-2 text-white">Welcome {{ userId }}</h1>
+    <h1 class="text-2xl md:text-4xl font-bold mb-4 p-2 text-white">Welcome {{ username }}</h1>
     <!-- <p class="text-lg md:text-xl mb-8 text-white">Here you can see your personal information</p> -->
 
      <div class="flex flex-row gap-4 justify-center flex-wrap">
@@ -44,6 +44,6 @@ const props = defineProps({
 });
 
 const decodedToken = getDecodedToken(); 
-    const userId = decodedToken.username; 
+const username = decodedToken.username; 
 
 </script>

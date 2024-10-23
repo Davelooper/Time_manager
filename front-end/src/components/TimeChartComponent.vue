@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Bar, Line, Pie } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, LineElement, ArcElement, CategoryScale, LinearScale } from 'chart.js';
 import type { ChartOptions, ChartData } from 'chart.js';
@@ -55,10 +55,6 @@ function fetchClocks(iduser: string){
  console.log(getAllClocksUser)
 }
 
-function fetchWorkingTime(){
-let getAllWorkingTimeByTeams = getAllWorkingTimeByUser(teamId)
-console.log(getAllWorkingTimeByTeams)
-}
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, LineElement, ArcElement, CategoryScale, LinearScale);
 
@@ -91,22 +87,75 @@ const chartDataHours: ChartData<'line'> = {
   ],
 };
 
-// Données pour le graphique "Bar" (Hebdomadaire)
-const chartDataWeek: ChartData<'bar'> = {
+const chartDataWeek = ref<ChartData<'bar'>>({
   labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
   datasets: [
     {
-      label: 'Heures travaillées',
+      label: 'Working Hour',
       backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-      data: [8, 7.5, 8.5, 9, 7, 4, 0],
+      data: [0, 0, 0, 0, 0, 0, 0], // Initialisé à 0, sera mis à jour avec les vraies données
     },
     {
       label: 'Objectif (heures)',
       backgroundColor: '#ef4444',
-      data: [8, 8, 8, 8, 8, 8, 0],
+      data: [8, 8, 8, 8, 8, 8, 0], // Objectif fixe
     },
   ],
-};
+});
+
+function calculateWorkingHours(start: string, end: string): number {
+  const startTime = new Date(start);
+  const endTime = new Date(end);
+  const diffInMs = endTime.getTime() - startTime.getTime();
+  return diffInMs / (1000 * 60 * 60);
+}
+async function fetchWorkingTime() {
+  try {
+    const response = await getAllWorkingTimeByUser(teamId);
+    const workingTimes = response.data;
+
+    // Initialiser les heures travaillées par jour (0 pour chaque jour)
+    const hoursWorkedPerDay = {
+      Monday: 0,
+      Tuesday: 0,
+      Wednesday: 0,
+      Thursday: 0,
+      Friday: 0,
+      Saturday: 0,
+      Sunday: 0,
+    };
+
+    // Parcourir les données de workingTime
+    workingTimes.forEach((entry: { start: string, end: string }) => {
+      const dayOfWeek = new Date(entry.start).toLocaleDateString('en-US', { weekday: 'long' });
+      const hoursWorked = calculateWorkingHours(entry.start, entry.end);
+
+      if (hoursWorkedPerDay[dayOfWeek] !== undefined) {
+        hoursWorkedPerDay[dayOfWeek] += hoursWorked;
+      }
+    });
+
+    // Mettre à jour les données du graphique
+    chartDataWeek.value.datasets[0].data = [
+      hoursWorkedPerDay.Monday,
+      hoursWorkedPerDay.Tuesday,
+      hoursWorkedPerDay.Wednesday,
+      hoursWorkedPerDay.Thursday,
+      hoursWorkedPerDay.Friday,
+      hoursWorkedPerDay.Saturday,
+      hoursWorkedPerDay.Sunday,
+    ];
+
+    console.log('Données mises à jour pour le graphique:', chartDataWeek.value);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des heures travaillées:', error);
+  }
+}
+
+onMounted(() => {
+  fetchWorkingTime();
+});
+
 
 // Options spécifiques pour le graphique "Bar"
 const barChartOptions: ChartOptions<'bar'> = {
