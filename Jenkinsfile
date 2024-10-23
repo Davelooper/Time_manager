@@ -4,26 +4,33 @@ pipeline {
   environment {
     GITHUB_CREDENTIALS_ID = 'github_credentials'
     DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
-    DOCKER_COMPOSE_DEV = 'docker-compose.dev.yaml'
-    DOCKER_COMPOSE_PROD = 'docker-compose.prod.yaml'
     ENV_FILE = '.env'
   }
 
   stages {
-    // Vérifier si on est sur la branche main et si le merge vient de 'dev' ou 'alex'
-    stage('Check Merge Brancheese') {
-      when {
-        branch 'main'
-      }
+
+    // Étape conditionnelle pour définir si c'est la branche main ou dev
+    stage('Set Docker Compose File') {
       steps {
-        echo "Building only for merges into main from dev or alex."
+        script {
+          // Vérifie si on est sur la branche main ou dev
+          if (env.BRANCH_NAME == 'main') {
+            echo "Using production Docker Compose"
+            env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
+          } else if (env.BRANCH_NAME == 'dev') {
+            echo "Using development Docker Compose"
+            env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
+          } else {
+            error "Unsupported branch: ${env.BRANCH_NAME}. Only 'main' and 'dev' are supported."
+          }
+        }
       }
     }
 
     stage('Checkout') {
       steps {
         script {
-          git credentialsId: "${GITHUB_CREDENTIALS_ID}", url: 'https://github.com/Davelooper/Time_manager', branch: 'main'
+          git credentialsId: "${GITHUB_CREDENTIALS_ID}", url: 'https://github.com/Davelooper/Time_manager', branch: "${env.BRANCH_NAME}"
         }
       }
     }
@@ -40,8 +47,8 @@ pipeline {
     stage('Build Docker Images') {
       steps {
         script {
-          echo "Building Docker Images"
-          sh "docker-compose -f ${DOCKER_COMPOSE_PROD} --env-file ${ENV_FILE} build"
+          echo "Building Docker Images using ${DOCKER_COMPOSE_FILE}"
+          sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} build"
         }
       }
     }
@@ -50,9 +57,8 @@ pipeline {
       steps {
         script {
           docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-            echo 'Logged into DockerHub'
             echo "Pushing Docker Images"
-            sh "docker-compose -f ${DOCKER_COMPOSE_PROD} push"
+            sh "docker-compose -f ${DOCKER_COMPOSE_FILE} push"
             echo "Docker Images pushed to DockerHub"
           }
         }
@@ -63,7 +69,7 @@ pipeline {
   post {
     always {
       script {
-        sh 'docker-compose -f ${DOCKER_COMPOSE_PROD} down --volumes || true'
+        sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} down --volumes || true'
       }
     }
   }
