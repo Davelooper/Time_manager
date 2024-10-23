@@ -15,9 +15,11 @@ pipeline {
         script {
           // Charger les variables depuis le fichier .env avec `sh` et les affecter aux variables de Jenkins
           sh '''
+            bash -c '
             set -a
             source ${ENV_FILE}
             set +a
+            '
           '''
           script {
             if (env.BRANCH_NAME == 'alex') { // Main branch
