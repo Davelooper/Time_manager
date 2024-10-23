@@ -10,7 +10,7 @@ pipeline {
   stages {
 
     // Étape conditionnelle pour définir si c'est la branche main ou dev
-    stage('Set Docker Compose File') {
+    stage('Set Docker Compose File DEV/PROD') {
       steps {
         script {
           // Vérifie si on est sur la branche main ou dev
