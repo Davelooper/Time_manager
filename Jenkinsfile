@@ -59,7 +59,7 @@ pipeline {
         }
       }
     }
-    stage('Run Backend Tests (Elixir)') {
+    stage('Run Backend Tests (Elixir) ') {
       steps {
         script {
           echo "Running Tests"
