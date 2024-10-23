@@ -36,8 +36,8 @@ echo "Base de données $POSTGRES_DB créée."
 echo "Exécution des migrations..."
 mix ecto.migrate
 
-echo "JE FAIS MON TEST UNITAIRE"
-mix test test/backend/user_test.exs
+# echo "JE FAIS MON TEST UNITAIRE"
+# mix test test/backend/user_test.exs
 
 
 echo "svp je crée mes données :D"
