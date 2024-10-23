@@ -23,6 +23,7 @@ defmodule BackendWeb.Router do
     get("/users/:userId", UserController, :show)
     get("/users/team/:teamId", UserController, :get_all_by_team_id)
     put("/users/:userId", UserController, :update)
+    delete("/users/:userId", UserController, :delete)
 
     resources("/teams", TeamController, except: [:new, :edit])
 
