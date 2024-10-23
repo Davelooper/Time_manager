@@ -2,14 +2,14 @@
 
 # Charger les variables d'environnement depuis le fichier .env
 set -o allexport
-. .env
+. ./.env
 set +o allexport
 
 # Afficher la variable d'environnement SERVICE_ENV pour débogage
 echo "SERVICE_ENV = $SERVICE_ENV"
 
 # Vérifier la variable d'environnement SERVICE_ENV
-if [ "$SERVICE_ENV" == "PROD" ]; then
+if [ "$SERVICE_ENV" = "PROD" ]; then  # Remplacer == par = 
     echo "Lancement de l'environnement de production..."
 
     # Arrêter et supprimer les conteneurs associés à docker-compose.pipeline.yaml
