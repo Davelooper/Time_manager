@@ -15,7 +15,7 @@ pipeline {
     stage('Set Docker Compose and Env Variables') {
       steps {
         script {
-          // Charger les variables depuis le fichier .env et les injecter dans Jenkins
+          // Charger les variables depuis le fichier .env et les injecter dans Jenkin
           sh '''
             # Charger le fichier .env et exporter les variables dans Jenkins
             set -a
