@@ -41,7 +41,7 @@ pipeline {
         }
       }
     }
-    stage('Install Elixir Dependencies') {
+    stage('Install Elixir DependenciesS') {
       steps {
         script {
           echo "Installing Elixir Dependencies"
