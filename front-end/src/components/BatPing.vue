@@ -72,7 +72,7 @@ async function addNewDate() {
                 return false; // Aucune information d'identification récupérée
             }
         } catch (error) {
-            console.error('Erreur lors de l\'authentification WebAuthn:', error);
+            console.error('Erreur lors de l\'authentification WebAuth:', error);
             return false; // En cas d'erreur, renvoie false
         }
     }
