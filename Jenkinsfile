@@ -16,14 +16,14 @@ pipeline {
           // Charger les variables à partir du fichier .env
           def envVars = readProperties file: "${ENV_FILE}"
 
-          if (env.BRANCH_NAME == 'main') {
+          if (env.BRANCH_NAME == 'alex') {
             echo "Using production Docker Compose and Env"
             env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
             // Copier les valeurs pour PROD
             env.POSTGRES_USER = envVars['POSTGRES_USER_PROD']
             env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_PROD']
             env.POSTGRES_DB = envVars['POSTGRES_DB_PROD']
-          } else if (env.BRANCH_NAME == 'dev') {
+          } else if (env.BRANCH_NAME == 'prealex') {
             echo "Using development Docker Compose and Env"
             env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
             // Copier les valeurs pour DEV
@@ -31,7 +31,7 @@ pipeline {
             env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_DEV']
             env.POSTGRES_DB = envVars['POSTGRES_DB_DEV']
           } else {
-            error "Unsupported branch: ${env.BRANCH_NAME}. Only 'main' and 'dev' are supported."
+            error "Unsupported branch: ${env.BRANCH_NAME}. Only 'alex' and 'prealex' are supported."
           }
 
           // Afficher les valeurs pour debug
