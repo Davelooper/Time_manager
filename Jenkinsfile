@@ -50,7 +50,7 @@ pipeline {
         }
       }
     }
-    stage('Compile Elixir') {
+    stage('Compile Elixir & Elixir Deps') {
       steps {
         script {
           echo "Compiling Elixir"
