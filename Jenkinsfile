@@ -92,8 +92,8 @@ pipeline {
       steps {
         script {
           echo "Create and Populate BDD"
-          sh "cd backend && ecto.create"
-          sh "cd backend && ecto.migrate"
+          sh "cd backend && mix ecto.create"
+          sh "cd backend && mix ecto.migrate"
         }
       }
     }
