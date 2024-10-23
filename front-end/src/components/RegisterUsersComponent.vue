@@ -20,13 +20,14 @@ interface User {
     email: string;
     username: string;
     password: string;
-    idteam: null;
+    team_id: string;
+    role: string
 }
 interface Team {
     id: string;
     username: string; // Le nom ou identifiant affichable de l'équipe
 }
-const user = ref<User>({ email: '', username: '', password: '', idteam: null });
+const user = ref<User>({ email: '', username: '', password: '', team_id: '', role: '' });
 const teams = ref<Team[]>([]);
 
 async function fetchTeams() {
@@ -67,7 +68,7 @@ onMounted(() => {
                 <form @submit.prevent="registerForm" class="rounded p-8 mb-4">
                     <div class="mb-4">
                         <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Select Teams</label>
-                        <select id="team" v-model="user.idteam" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <select id="team" v-model="user.team_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                             <option value="" disabled selected>Choisissez une équipe</option>
                             <option v-for="team in teams"
                                 :value="team.id">
@@ -85,14 +86,26 @@ onMounted(() => {
                         <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
                         <input type="text" id="username" v-model="user.username"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            placeholder="Your email" />
+                            placeholder="Username" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <input type="password" id="password" placeholder="Your password" v-model="user.password"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
 
                     <div class="mb-6">
-                        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                        <input type="password" id="password" placeholder="Your password" v-model="user.password"
-                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" />
+                      <label for="team" class="block text-gray-700 text-sm font-bold mb-2">Role</label>
+                      <select id="team" v-model="user.role" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                          <option value="" disabled selected>Choisissez un rôle</option>
+                          <option value="user"  selected>User</option>
+                          <option value="manager">Manager</option>
+                          <option value="admin" >Administrator</option>
+                      </select>
                     </div>
+                    
+
 
                     <div class="flex items-center justify-between w-full">
                         <button type="submit"
