@@ -1,8 +1,5 @@
 services:
   elixir:
-    # build:
-    #   dockerfile: Dockerfile.prod
-    #   context: ./backend
     ports:
       - "4000:4000"
     depends_on:
