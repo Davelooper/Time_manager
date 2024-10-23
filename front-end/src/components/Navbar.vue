@@ -20,11 +20,11 @@
     </svg>
 </button>
 <button 
-    v-if="role === 'admin'|| 'manager'"
+    v-if="['admin', 'manager'].includes(decodedToken.role)"
     @click="toggleModal" 
     class="py-2 pl-3 pr-2 flex items-center justify-center bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300">
     Create User
-  </button>
+</button>
       </div>
       <div v-else class="flex items-center space-x-4">
         <Button to="/workingtimes" text="Bat Time" type="contained" rounded textColor="white" color="gold" />
@@ -44,20 +44,17 @@ import Button from './Button.vue';
 import { logoutUser, useUser } from '../store/userStore';
 import { ref,onMounted } from 'vue';
 import RegisterUsersComponent from './RegisterUsersComponent.vue';
-import {getToken,getDecodedToken} from "../store/userStore";
+import {getDecodedToken} from "../store/userStore";
 const { isConnected } = useUser();
 const showModal = ref(false);
 
 function toggleModal(){
   showModal.value = !showModal.value;
 }
-// # define the props
-const role = ref<string | null>(null);
-
-onMounted(() => {
   const decodedToken = getDecodedToken();
-  role.value = decodedToken?.role || null;
-});
+
+console.log(decodedToken.role, 'LALA LALA')
+
 </script>
 
 <style scoped>
