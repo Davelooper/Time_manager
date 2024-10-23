@@ -10,16 +10,24 @@ pipeline {
   stages {
 
     // Étape conditionnelle pour définir si c'est la branche main ou dev
-    stage('Set Docker Compose File DEV/PROD') {
+    stage('Set Docker Compose and Env Variables') {
       steps {
         script {
-          // Vérifie si on est sur la branche main ou dev
+          // Sélectionner les variables d'environnement correctes en fonction de la branche
           if (env.BRANCH_NAME == 'main') {
-            echo "Using production Docker Compose"
+            echo "Using production Docker Compose and Env"
             env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
+            // Alias pour les variables PROD
+            env.POSTGRES_USER = '${POSTGRES_USER_PROD}'
+            env.POSTGRES_PASSWORD = '${POSTGRES_PASSWORD_PROD}'
+            env.POSTGRES_DB = '${POSTGRES_DB_PROD}'
           } else if (env.BRANCH_NAME == 'dev') {
-            echo "Using development Docker Compose"
+            echo "Using development Docker Compose and Env"
             env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
+            // Alias pour les variables DEV
+            env.POSTGRES_USER = '${POSTGRES_USER_DEV}'
+            env.POSTGRES_PASSWORD = '${POSTGRES_PASSWORD_DEV}'
+            env.POSTGRES_DB = '${POSTGRES_DB_DEV}'
           } else {
             error "Unsupported branch: ${env.BRANCH_NAME}. Only 'main' and 'dev' are supported."
           }
@@ -50,27 +58,27 @@ pipeline {
         }
       }
     }
-      stage('Start Database for Tests') {
-        steps {
-          script {
-            echo "Env files"
-            sh "cat ${ENV_FILE}"
-            // Démarrer le conteneur Postgres
-            echo "Starting Postgres container for tests"
-            sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
+    stage('Start Database for Tests') {
+      steps {
+        script {
+          echo "Env files"
+          sh "cat ${ENV_FILE}"
+          // Démarrer le conteneur Postgres
+          echo "Starting Postgres container for tests"
+          sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
 
-            // Attendre que Postgres soit prêt
-            echo "Waiting for Postgres to be ready..."
-            sh '''
-              until docker exec $(docker-compose -f ${DOCKER_COMPOSE_FILE} ps -q db) pg_isready -h localhost -p 5432 -U ${POSTGRES_USER_DEV}; do
-                echo "Waiting for Postgres..."
-                sleep 2
-              done
-              echo "Postgres is ready!"
-            '''
-          }
+          // Attendre que Postgres soit prêt
+          echo "Waiting for Postgres to be ready..."
+          sh '''
+            until docker exec \$(docker-compose -f ${DOCKER_COMPOSE_FILE} ps -q db) pg_isready -h localhost -p 5432 -U \${POSTGRES_USER}; do
+              echo "Waiting for Postgres..."
+              sleep 2
+            done
+            echo "Postgres is ready!"
+          '''
         }
       }
+    }
     stage('Compile Elixir & Elixir Deps') {
       steps {
         script {
