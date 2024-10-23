@@ -19,9 +19,12 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h6a2 2 0 012 2v1"/>
     </svg>
 </button>
-<button @click="toggleModal" class="py-2 pl-3 pr-2 flex items-center justify-center bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300">
+<button 
+    v-if="role === 'admin'|| 'manager'"
+    @click="toggleModal" 
+    class="py-2 pl-3 pr-2 flex items-center justify-center bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300">
     Create User
-</button>
+  </button>
       </div>
       <div v-else class="flex items-center space-x-4">
         <Button to="/workingtimes" text="Bat Time" type="contained" rounded textColor="white" color="gold" />
@@ -39,15 +42,22 @@
 <script setup lang="ts">
 import Button from './Button.vue';
 import { logoutUser, useUser } from '../store/userStore';
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
 import RegisterUsersComponent from './RegisterUsersComponent.vue';
+import {getToken,getDecodedToken} from "../store/userStore";
 const { isConnected } = useUser();
 const showModal = ref(false);
 
 function toggleModal(){
   showModal.value = !showModal.value;
 }
+// # define the props
+const role = ref<string | null>(null);
 
+onMounted(() => {
+  const decodedToken = getDecodedToken();
+  role.value = decodedToken?.role || null;
+});
 </script>
 
 <style scoped>

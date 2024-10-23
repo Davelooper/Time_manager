@@ -10,13 +10,21 @@ export interface Clocks {
     time: string;
 }
 
-export function createClocks(clocks: Clocks, iduser: string): void {
+export function createClocks(clocks: Clocks, iduser: string): void {  
     axios
-      .post(`http://localhost:4000/api/clocks/${iduser}`, {
-        clock: {
-          time: clocks.time,
+      .post(
+        `http://localhost:4000/api/clocks/${iduser}`,
+        {
+          clock: {
+            time: clocks.time,
+          },
         },
-      })
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Ajouter le token JWT ici
+          },
+        }
+      )
       .then((response) => {
         console.log("Réponse du serveur:", response.data);
       })

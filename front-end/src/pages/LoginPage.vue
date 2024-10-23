@@ -143,8 +143,8 @@ async function connectWebAuth(): Promise<void> {
             try {
                 formDataCode.value.code = credentialData.id
                 const response = await biometricAuth(formDataCode.value)
-                window.location.href = response.data.redirectUrl
-            } catch (error) {
+                window.location.href = '/dashboard';
+              } catch (error) {
                 console.error('Error sending biometric data:', error)
             }
         }
