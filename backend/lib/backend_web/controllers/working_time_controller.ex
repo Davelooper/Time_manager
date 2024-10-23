@@ -6,6 +6,26 @@ defmodule BackendWeb.WorkingTimeController do
 
   action_fallback BackendWeb.FallbackController
 
+  plug(
+    BackendWeb.Plugs.AuthPlug
+    when action in [:get_all_by_team_id, :update, :create]
+  )
+
+  plug(
+    BackendWeb.Plugs.IsManagerPlug
+    when action in [:get_all_by_team_id, :update]
+  )
+
+  plug(
+    BackendWeb.Plugs.IsManagerOrUserInRequestPlug
+    when action in []
+  )
+
+  plug(
+    BackendWeb.Plugs.IsAdminPlug
+    when action in [:create]
+  )
+
   def index(conn, _params) do
     working_times = WorkingTimes.list_working_times()
     render(conn, :index, working_times: working_times)
@@ -15,7 +35,7 @@ defmodule BackendWeb.WorkingTimeController do
   #   with {:ok, %WorkingTime{} = working_time} <- WorkingTimes.create_working_time(working_time_params) do
   #     conn
   #     |> put_status(:created)
-  #     |> put_resp_header("location", ~p"/api/working_times/#{working_time}")
+      # |> put_resp_header("location", ~p"/api/working_times/#{working_time}")
   #     |> render(:show, working_time: working_time)
   #   end
   # end
@@ -64,9 +84,9 @@ defmodule BackendWeb.WorkingTimeController do
   def get_all_by_team_id(conn, %{"teamId" => teamId} = params) do
     start_date = Map.get(params, "start")
     end_date = Map.get(params, "end")
-    IO.inspect(start_date)
-    IO.inspect(end_date)
-    IO.inspect(teamId)
+    # IO.inspect(start_date)
+    # IO.inspect(end_date)
+    # IO.inspect(teamId)
 
     # with {:ok, startdate} <- Date.from_iso8601(start_date),
     #      {:ok, enddate} <- Date.from_iso8601(end_date) do
