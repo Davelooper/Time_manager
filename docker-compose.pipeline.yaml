@@ -18,7 +18,7 @@ services:
     command: >
       bash -c "
         apt-get update &&
-        apt-get install -y docker.io docker-compose &&
+        apt-get install -y docker.io docker-compose-plugin &&
         usermod -aG docker jenkins &&
         chown -R jenkins:jenkins /var/jenkins_home &&
         chown jenkins:docker /var/run/docker.sock &&
