@@ -7,7 +7,7 @@ pipeline {
     ENV_FILE = '.env'
   }
 
-  stages {
+
 
     // Étape pour définir les variables Docker Compose et les variables d'environnement à partir du fichier .env
     stages {
@@ -15,28 +15,41 @@ pipeline {
     stage('Set Docker Compose and Env Variables') {
       steps {
         script {
-          // Charger les variables depuis le fichier .env
+          // Charger les variables depuis le fichier .env et les injecter dans Jenkins
           sh '''
+            # Charger le fichier .env et exporter les variables dans Jenkins
             set -a
-            source ./${ENV_FILE}
+            . ./${ENV_FILE}  # Charge les variables
+            echo "POSTGRES_USER_DEV=$POSTGRES_USER_DEV" > env_output
+            echo "POSTGRES_PASSWORD_DEV=$POSTGRES_PASSWORD_DEV" >> env_output
+            echo "POSTGRES_DB_DEV=$POSTGRES_DB_DEV" >> env_output
+            echo "POSTGRES_USER_PROD=$POSTGRES_USER_PROD" >> env_output
+            echo "POSTGRES_PASSWORD_PROD=$POSTGRES_PASSWORD_PROD" >> env_output
+            echo "POSTGRES_DB_PROD=$POSTGRES_DB_PROD" >> env_output
             set +a
           '''
-          
+
+          // Lire les variables exportées
+          def envVars = readFile('env_output').split('\n').collectEntries { entry ->
+              def pair = entry.split('=')
+              [(pair[0]): pair[1]]
+          }
+
           // Définir les variables en fonction de la branche
           if (env.BRANCH_NAME == 'alex') { // Main branch
             echo "Using production Docker Compose and Env"
             env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
-            // Copier les valeurs pour PROD
-            env.POSTGRES_USER = sh(script: "echo $POSTGRES_USER_PROD", returnStdout: true).trim()
-            env.POSTGRES_PASSWORD = sh(script: "echo $POSTGRES_PASSWORD_PROD", returnStdout: true).trim()
-            env.POSTGRES_DB = sh(script: "echo $POSTGRES_DB_PROD", returnStdout: true).trim()
+            // Utiliser les valeurs PROD
+            env.POSTGRES_USER = envVars['POSTGRES_USER_PROD']
+            env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_PROD']
+            env.POSTGRES_DB = envVars['POSTGRES_DB_PROD']
           } else if (env.BRANCH_NAME == 'prealex') { // Dev branch
             echo "Using development Docker Compose and Env"
             env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
-            // Copier les valeurs pour DEV
-            env.POSTGRES_USER = sh(script: "echo $POSTGRES_USER_DEV", returnStdout: true).trim()
-            env.POSTGRES_PASSWORD = sh(script: "echo $POSTGRES_PASSWORD_DEV", returnStdout: true).trim()
-            env.POSTGRES_DB = sh(script: "echo $POSTGRES_DB_DEV", returnStdout: true).trim()
+            // Utiliser les valeurs DEV
+            env.POSTGRES_USER = envVars['POSTGRES_USER_DEV']
+            env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_DEV']
+            env.POSTGRES_DB = envVars['POSTGRES_DB_DEV']
           } else {
             error "Unsupported branch: ${env.BRANCH_NAME}. Only 'alex' and 'prealex' are supported."
           }
