@@ -74,6 +74,7 @@ pipeline {
               echo "Waiting for Postgres..."
               sleep 2
             done
+            sleep 10
             echo "Postgres is ready!"
           '''
         }
