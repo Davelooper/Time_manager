@@ -16,5 +16,6 @@ defmodule Backend.Clocks.Clock do
     clock
     |> cast(attrs, [:time, :user_id])
     |> validate_required([:time, :user_id])
+
   end
 end

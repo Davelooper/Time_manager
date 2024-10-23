@@ -177,6 +177,14 @@ defmodule Backend.Accounts do
       nil
     end
   end
+  def get_user_by_webauthn_token(token) do
+    case Repo.get_by(User, web_auth_token: token) do
+      nil ->
+        {:error, "No user found with this WebAuthn token"}
+      user ->
+        {:ok, user}
+    end
+  end
 
   @doc """
   Gets a single user.
@@ -484,4 +492,9 @@ defmodule Backend.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  def get_all_by_team_id(team_id) do
+    Repo.all(from(u in User, where: u.team_id == ^team_id))
+  end
+
 end

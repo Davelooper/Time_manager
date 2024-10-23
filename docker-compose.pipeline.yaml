@@ -1,0 +1,33 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    user: root
+    privileged: true
+    container_name: jenkins
+    ports:
+      - "8087:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - //var/run/docker.sock:/var/run/docker.sock # Monte le socket Docker pour que Jenkins puisse utiliser Docker
+      # - "C:/Program Files/Docker/Docker/resources/bin:/usr/local/bin" # Monte Docker dans le conteneur Jenkins
+    networks:
+      - pipeline_network
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    command: >
+      bash -c "
+        apt-get update &&
+        apt-get install -y docker.io docker-compose &&
+        usermod -aG docker jenkins &&
+        chown -R jenkins:jenkins /var/jenkins_home &&
+        chown jenkins:docker /var/run/docker.sock &&
+        chmod 666 /var/run/docker.sock &&
+        su jenkins -c '/usr/local/bin/jenkins.sh'
+      "
+volumes:
+  jenkins_home:
+    # Volume pour persister les données de Jenkins
+
+networks:
+  pipeline_network: # external: true # Réseau partagé avec l'application

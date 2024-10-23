@@ -7,11 +7,25 @@ interface Role {
   id: number;
   name: string;
 }
+interface Team {
+  id: string;
+  username: string; // Le nom ou identifiant affichable de l'équipe
+}
 
 interface UserState {
   isConnected: boolean;
   token: string;
 }
+
+export interface User {
+  id?: string;
+  username: string;
+  email: string;
+  password: string;
+  team_id: string;
+  role?: Role;
+}
+
 export interface ManageUsers {
   data: any;
   id: number;
@@ -68,13 +82,7 @@ export function useUser() {
 }
 
 // Interface pour l'utilisateur
-export interface User {
-  id?: number;
-  username: string;
-  email: string;
-  password: string;
-  role?: Role;
-}
+
 
 // Fonction pour authentifier l'utilisateur
 export function authUser(user: User): Promise<void> {
@@ -91,14 +99,27 @@ export function authUser(user: User): Promise<void> {
       throw error;
     });
 }
-
+// TO DO ne pas faire de <any>
+export function biometricAuth(credential: string): Promise<any> {
+  return axios.post('http://localhost:4000/api/users/webauths', {
+    token: credential // Envoi direct du token   
+  })
+    .then(response => {
+      setToken(response.data.token); // Sauvegarde le token dans l'état
+      state.isConnected = true; // Modifie l'état de connexion
+      return response; // Retourne la réponse complète
+    })
+    .catch(error => {
+      console.error('Erreur lors de l\'authentification biométrique:', error);
+      throw error; // Lève l'erreur
+    });
+}
 // Fonction pour déconnecter l'utilisateur
 export function logoutUser(): void {
   state.isConnected = false;
   deleteToken();  // Supprime le token du localStorage
 }
 
-// Fonction pour stocker le token dans localStorage
 export function setToken(token: string): void {
   state.token = token;
   localStorage.setItem('token', token);
@@ -118,7 +139,6 @@ export function getDecodedToken(): any {
   }
 
   try {
-    // Décoder le token
     const decoded = jwtDecode(token);
     console.log("Token décodé:", decoded);
     return decoded;
@@ -134,11 +154,13 @@ function deleteToken(): void {
   state.token = '';
 }
 export function createUser(user: User): Promise<void> {
-  return axios.post('http://localhost:4000/api/user', {
+  console.log(user)
+  return axios.post('http://localhost:4000/api/users', {
     user: {
       email: user.email,
       password: user.password,
       username: user.username,
+      team_id: user.team_id
     }
   })
     .then(response => {
@@ -165,20 +187,6 @@ export function updateUser(user: User, iduser: number): void {
       throw error;
     });
 }
-export function biometricAuth(credential: string): Promise<void> {
-  return axios.post('http://localhost:4000/api/users/webauths', {
-    credential: { id: credential }  // Clé correcte pour correspondre à l'Elixir controller
-  })
-    .then(response => {
-      setToken(response.data.token);
-      state.isConnected = true;
-      return;
-    })
-    .catch(error => {
-      console.error('Erreur lors de la création de l\'utilisateur:', error);
-      throw error;
-    });
-}
 
 export async function getUserById(id: number): Promise<ManageUsers> {
   try {
@@ -199,4 +207,14 @@ export async function getAllUser(): Promise<User> {
     throw error;
   }
 }
-// Exemple d'autres fonctions API...
+
+
+export async function getAllTeams(): Promise<Team[]> {
+  try {
+    const response = await axios.get("http://localhost:4000/api/teams");
+    return response.data; // Renvoie les données de l'utilisateur
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+}

@@ -8,12 +8,12 @@ defmodule BackendWeb.UserController do
 
   plug(
     BackendWeb.Plugs.AuthPlug
-    when action in [:show, :create, :index, :update, :delete, :get_by_user_id]
+    when action in [:show, :create, :index, :update, :delete, :get_by_user_id, :get_all_by_team_id]
   )
 
   plug(
     BackendWeb.Plugs.IsManagerPlug
-    when action in [:create, :update, :delete]
+    when action in [:create, :update, :delete, :get_all_by_team_id]
   )
 
   plug(
@@ -104,4 +104,10 @@ defmodule BackendWeb.UserController do
         |> json(%{error: "Invalid email or password"})
     end
   end
+
+  def get_all_by_team_id(conn, %{"teamId" => teamId}) do
+    users = Accounts.get_all_by_team_id(teamId)
+    render(conn, "index.json", users: users)
+  end
+
 end
