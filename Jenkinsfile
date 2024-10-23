@@ -39,7 +39,7 @@ pipeline {
       steps {
         script {
           echo "Checking Docker versions"
-          sh '''docker --version && docker compose --version'''
+          sh '''docker --version && docker-compose --version'''
         }
       }
     }
