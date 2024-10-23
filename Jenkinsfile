@@ -17,7 +17,7 @@ pipeline {
           sh '''
             bash -c '
             set -a
-            source ${ENV_FILE}
+            source ./${ENV_FILE}
             set +a
             '
           '''
