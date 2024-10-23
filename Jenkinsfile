@@ -11,7 +11,7 @@ pipeline {
 
   stages {
     // Vérifier si on est sur la branche main et si le merge vient de 'dev' ou 'alex'
-    stage('Check Merge Branch') {
+    stage('Check Merge Brancheese') {
       when {
         branch 'main'
       }
