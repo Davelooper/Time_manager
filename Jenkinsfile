@@ -66,11 +66,7 @@ pipeline {
 
         echo "Starting Postgres container for tests"
         sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
-
-        // Vérification des variables d'environnement utilisées par le conteneur db
-        echo "Checking environment variables for db:"
-        sh "docker-compose -f ${DOCKER_COMPOSE_FILE} exec db env"
-
+        
         // Attendre que Postgres soit prêt
         echo "Waiting for Postgres to be ready..."
         sh """
