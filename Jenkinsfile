@@ -10,38 +10,40 @@ pipeline {
   stages {
 
     // Étape pour définir les variables Docker Compose et les variables d'environnement à partir du fichier .env
+    stages {
+
     stage('Set Docker Compose and Env Variables') {
       steps {
         script {
-          // Charger les variables depuis le fichier .env avec `sh` et les affecter aux variables de Jenkins
+          // Charger les variables depuis le fichier .env
           sh '''
             set -a
             source ./${ENV_FILE}
             set +a
           '''
-          script {
-            if (env.BRANCH_NAME == 'alex') { // Main branch
-              echo "Using production Docker Compose and Env"
-              env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
-              // Copier les valeurs pour PROD
-              env.POSTGRES_USER = sh(script: "echo $POSTGRES_USER_PROD", returnStdout: true).trim()
-              env.POSTGRES_PASSWORD = sh(script: "echo $POSTGRES_PASSWORD_PROD", returnStdout: true).trim()
-              env.POSTGRES_DB = sh(script: "echo $POSTGRES_DB_PROD", returnStdout: true).trim()
-            } else if (env.BRANCH_NAME == 'prealex') { // Dev branch
-              echo "Using development Docker Compose and Env"
-              env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
-              // Copier les valeurs pour DEV
-              env.POSTGRES_USER = sh(script: "echo $POSTGRES_USER_DEV", returnStdout: true).trim()
-              env.POSTGRES_PASSWORD = sh(script: "echo $POSTGRES_PASSWORD_DEV", returnStdout: true).trim()
-              env.POSTGRES_DB = sh(script: "echo $POSTGRES_DB_DEV", returnStdout: true).trim()
-            } else {
-              error "Unsupported branch: ${env.BRANCH_NAME}. Only 'alex' and 'prealex' are supported."
-            }
-
-            // Afficher les valeurs pour debug
-            echo "Postgres User: ${POSTGRES_USER}"
-            echo "Postgres DB: ${POSTGRES_DB}"
+          
+          // Définir les variables en fonction de la branche
+          if (env.BRANCH_NAME == 'alex') { // Main branch
+            echo "Using production Docker Compose and Env"
+            env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
+            // Copier les valeurs pour PROD
+            env.POSTGRES_USER = sh(script: "echo $POSTGRES_USER_PROD", returnStdout: true).trim()
+            env.POSTGRES_PASSWORD = sh(script: "echo $POSTGRES_PASSWORD_PROD", returnStdout: true).trim()
+            env.POSTGRES_DB = sh(script: "echo $POSTGRES_DB_PROD", returnStdout: true).trim()
+          } else if (env.BRANCH_NAME == 'prealex') { // Dev branch
+            echo "Using development Docker Compose and Env"
+            env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
+            // Copier les valeurs pour DEV
+            env.POSTGRES_USER = sh(script: "echo $POSTGRES_USER_DEV", returnStdout: true).trim()
+            env.POSTGRES_PASSWORD = sh(script: "echo $POSTGRES_PASSWORD_DEV", returnStdout: true).trim()
+            env.POSTGRES_DB = sh(script: "echo $POSTGRES_DB_DEV", returnStdout: true).trim()
+          } else {
+            error "Unsupported branch: ${env.BRANCH_NAME}. Only 'alex' and 'prealex' are supported."
           }
+
+          // Afficher les valeurs pour debug
+          echo "Postgres User: ${POSTGRES_USER}"
+          echo "Postgres DB: ${POSTGRES_DB}"
         }
       }
     }
