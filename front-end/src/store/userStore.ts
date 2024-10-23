@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { reactive, computed, onMounted } from "vue"
 import { jwtDecode } from 'jwt-decode';
-
 // Interface de l'utilisateur et du rôle
 interface Role {
   id: number;
@@ -114,10 +113,10 @@ export function biometricAuth(credential: string): Promise<any> {
       throw error; // Lève l'erreur
     });
 }
-export function createAuth(credential: string,iduser: string): Promise<any> {
+export function createAuth(credential: string, iduser: string): Promise<any> {
   console.log('TESTEJ SUIS PASSE ')
   return axios.post(`http://localhost:4000/api/users/webauths/${iduser}`, {
-    token: credential 
+    token: credential
 
   })
     .then(response => {
@@ -172,14 +171,19 @@ function deleteToken(): void {
 export function createUser(user: User): Promise<void> {
   console.log(user)
   return axios.post('http://localhost:4000/api/users', {
+
     user: {
       email: user.email,
       password: user.password,
       username: user.username,
-      team_id: user.team_id
+      team_id: user.team_id,
+      role: user.role
     }
-  })
-    .then(response => {
+  }, {
+    headers: {
+      Authorization: `Bearer ${getToken()}` // Ajouter le token dans l'en-tête
+    }
+  }).then(response => {
       console.log('Utilisateur créé:', response.data);
     })
     .catch(error => {
