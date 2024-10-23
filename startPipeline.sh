@@ -2,7 +2,7 @@
 
 # Charger les variables d'environnement depuis le fichier .env
 set -o allexport
-source .env
+. .env
 set +o allexport
 
 # Afficher la variable d'environnement SERVICE_ENV pour débogage
