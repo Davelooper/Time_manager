@@ -19,7 +19,7 @@ pipeline {
           sh '''
             # Charger le fichier .env et exporter les variables dans Jenkins
             set -a
-            . ./${ENV_FILE}  # Charge les variables
+            . ${ENV_FILE}  # Charge les variables
             echo "POSTGRES_USER_DEV=$POSTGRES_USER_DEV" > env_output
             echo "POSTGRES_PASSWORD_DEV=$POSTGRES_PASSWORD_DEV" >> env_output
             echo "POSTGRES_DB_DEV=$POSTGRES_DB_DEV" >> env_output
