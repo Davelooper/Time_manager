@@ -1,7 +1,7 @@
 <template>
   <Navbar />
 
-    <h1 class="text-2xl md:text-4xl font-bold mb-4 text-white">Welcome to your profile</h1>
+    <h1 class="text-2xl md:text-4xl font-bold mb-4 p-2 text-white">Welcome {{ userId }}</h1>
     <!-- <p class="text-lg md:text-xl mb-8 text-white">Here you can see your personal information</p> -->
 
      <div class="flex flex-row gap-4 justify-center flex-wrap">
@@ -33,6 +33,7 @@ import Navbar from "../components/Navbar.vue"
 import { getToken } from "../store/userStore";
 import BatPing from "../components/BatPing.vue"
 import TimeChartComponent from "@/components/TimeChartComponent.vue";
+import {getDecodedToken} from "../store/userStore";
 // # define the props
 const props = defineProps({
   token: {
@@ -41,4 +42,8 @@ const props = defineProps({
     default: getToken(),
   },
 });
+
+const decodedToken = getDecodedToken(); 
+    const userId = decodedToken.username; 
+
 </script>
