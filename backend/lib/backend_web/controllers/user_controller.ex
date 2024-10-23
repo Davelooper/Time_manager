@@ -21,6 +21,11 @@ defmodule BackendWeb.UserController do
     when action in [:show]
   )
 
+  plug(
+    BackendWeb.Plugs.IsAdminPlug
+    when action in [:delete]
+  )
+
   def index(conn, _params) do
     users = Accounts.list_users()
     render(conn, :index, users: users)
@@ -66,7 +71,7 @@ defmodule BackendWeb.UserController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"userId" => id}) do
     user = Accounts.get_user!(id)
 
     with {:ok, %User{}} <- Accounts.delete_user(user) do
