@@ -7,7 +7,7 @@ pipeline {
     ENV_FILE = '.env'
   }
 
-  stages {
+
 
     // Étape pour définir les variables Docker Compose et les variables d'environnement à partir du fichier .env
     stages {
