@@ -9,28 +9,34 @@ pipeline {
 
   stages {
 
-    // Étape conditionnelle pour définir si c'est la branche main ou dev
+    // Étape pour définir les variables Docker Compose et les variables d'environnement à partir du fichier .env
     stage('Set Docker Compose and Env Variables') {
       steps {
         script {
-          // Sélectionner les variables d'environnement correctes en fonction de la branche
+          // Charger les variables à partir du fichier .env
+          def envVars = readProperties file: "${ENV_FILE}"
+
           if (env.BRANCH_NAME == 'main') {
             echo "Using production Docker Compose and Env"
             env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
-            // Alias pour les variables PROD
-            env.POSTGRES_USER = '${POSTGRES_USER_PROD}'
-            env.POSTGRES_PASSWORD = '${POSTGRES_PASSWORD_PROD}'
-            env.POSTGRES_DB = '${POSTGRES_DB_PROD}'
+            // Copier les valeurs pour PROD
+            env.POSTGRES_USER = envVars['POSTGRES_USER_PROD']
+            env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_PROD']
+            env.POSTGRES_DB = envVars['POSTGRES_DB_PROD']
           } else if (env.BRANCH_NAME == 'dev') {
             echo "Using development Docker Compose and Env"
             env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
-            // Alias pour les variables DEV
-            env.POSTGRES_USER = '${POSTGRES_USER_DEV}'
-            env.POSTGRES_PASSWORD = '${POSTGRES_PASSWORD_DEV}'
-            env.POSTGRES_DB = '${POSTGRES_DB_DEV}'
+            // Copier les valeurs pour DEV
+            env.POSTGRES_USER = envVars['POSTGRES_USER_DEV']
+            env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_DEV']
+            env.POSTGRES_DB = envVars['POSTGRES_DB_DEV']
           } else {
             error "Unsupported branch: ${env.BRANCH_NAME}. Only 'main' and 'dev' are supported."
           }
+
+          // Afficher les valeurs pour debug
+          echo "Postgres User: ${POSTGRES_USER}"
+          echo "Postgres DB: ${POSTGRES_DB}"
         }
       }
     }
