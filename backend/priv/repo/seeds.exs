@@ -17,13 +17,13 @@ teams = [
   %Team{username: "Robin"},
   %Team{username: "Batgirl"},
   %Team{username: "Nightwing"},
-  %Team{username: "The Joker Gang"},
-  %Team{username: "Gotham Police Department"},
-  %Team{username: "Harley Quinn's Crew"},
-  %Team{username: "The Court of Owls"},
-  %Team{username: "Justice League"},
-  %Team{username: "The Bat Family"},
-  %Team{username: "Suicide Squad"}
+  %Team{username: "The_Joker_Gang"},
+  %Team{username: "Gotham_Police_Department"},
+  %Team{username: "Harley_Quinn_Crew"},
+  %Team{username: "The_Court_of_Owls"},
+  %Team{username: "Justice_League"},
+  %Team{username: "The_Bat_Family"},
+  %Team{username: "Suicide_Squad"}
 ]
 
 Enum.each(teams, fn team ->

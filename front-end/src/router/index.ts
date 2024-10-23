@@ -1,10 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import PortalView from '../pages/Portal.vue'
-import ChartManager from '@/pages/ChartManagerPages.vue'
-import ClockManager from '@/pages/ClockManagerPages.vue'
 import User from '@/pages/UserPages.vue'
 import WorkingTime from '@/pages/WorkingTimePages.vue'
-import WorkingTimes from '@/pages/WorkingTimesPages.vue'
 import Home from '@/pages/Home.vue'
 import LoginPage from '@/pages/LoginPage.vue'
 
@@ -22,16 +19,6 @@ const router = createRouter({
       component: Home
     },
     {
-      path: '/charManager',
-      name: 'ChartManager',
-      component: ChartManager
-    },
-    {
-      path: '/ClockManager',
-      name: 'ClockManager',
-      component: ClockManager
-    },
-    {
       path: '/User',
       name: 'User',
       component: User
@@ -45,11 +32,6 @@ const router = createRouter({
       path: '/WorkingTime',
       name: 'WorkingTime',
       component: WorkingTime
-    },
-    {
-      path: '/WorkingTimes',
-      name: 'WorkingTimes',
-      component: WorkingTimes
     },
     {
       path: '/dashboard',

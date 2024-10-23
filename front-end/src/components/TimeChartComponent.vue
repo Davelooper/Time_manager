@@ -15,13 +15,13 @@
       >
         Weekly
       </li>
-      <li
-        @click="activeTab = 3"
-        class="cursor-pointer py-2 px-4 text-gray-600 dark:text-gray-400 border-b-2"
-        :class="activeTab === 3 ? 'border-blue-500 text-blue-500' : 'border-transparent'"
-      >
-        Daily
-      </li>
+    <button @click="fetchClocks(userId)"
+    class="text-blue-800"
+    > TEST CLOCKS </button>
+    <button @click="fetchWorkingTime()"
+    class="text-blue-800"
+    > TEST workingTime </button>
+      
     </ul>
     <div class="p-4 flex flex-row justify-center">
       <div class="size-96" v-if="activeTab === 1">
@@ -42,6 +42,26 @@ import { ref } from 'vue';
 import { Bar, Line, Pie } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, LineElement, ArcElement, CategoryScale, LinearScale } from 'chart.js';
 import type { ChartOptions, ChartData } from 'chart.js';
+import {getClocksByUserId} from '../store/clocksStore';
+import {getDecodedToken} from '../store/userStore';
+import {getAllWorkingTimeByUser} from '../store/workingTimeStore';
+
+const decodedToken = getDecodedToken(); 
+    const userId = decodedToken.id; 
+    console.log(userId)
+function fetchClocks(iduser: string){
+
+ let getAllClocksUser = getClocksByUserId(iduser)
+ console.log(getAllClocksUser)
+
+}
+function fetchWorkingTime(){
+
+  const teamId = decodedToken.team_id
+  console.log(teamId)
+let getAllWorkingTimeByTeams = getAllWorkingTimeByUser(teamId)
+console.log(getAllWorkingTimeByTeams)
+}
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, LineElement, ArcElement, CategoryScale, LinearScale);
 

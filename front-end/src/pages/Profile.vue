@@ -15,7 +15,12 @@
     <div class="flex flex-col md:flex-row justify-between gap-6">
         <ProgressDays title="This Week" :data="[10, 20, 30, 40, 50, 60, 70]"/>
     </div>
+
+    <div class="flex flex-col md:flex-row justify-between gap-6">
+      <TimeChartComponent />
+    </div>
   </div>
+
 
 </template>
 
@@ -27,6 +32,7 @@ import ListUserByTeamsComponent from "@/components/ListUserByTeamsComponent.vue"
 import Navbar from "../components/Navbar.vue"
 import { getToken } from "../store/userStore";
 import BatPing from "../components/BatPing.vue"
+import TimeChartComponent from "@/components/TimeChartComponent.vue";
 // # define the props
 const props = defineProps({
   token: {
