@@ -53,6 +53,8 @@ pipeline {
       stage('Start Database for Tests') {
         steps {
           script {
+            echo "Env files"
+            sh "cat ${ENV_FILE}"
             // Démarrer le conteneur Postgres
             echo "Starting Postgres container for tests"
             sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
