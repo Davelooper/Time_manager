@@ -50,6 +50,7 @@ defmodule Backend.Clocks do
 
   """
   def create_clock(attrs \\ %{}) do
+    IO.inspect(attrs)
     %Clock{}
     |> Clock.changeset(attrs)
     |> Repo.insert()
