@@ -31,7 +31,7 @@
   </nav>
   <div v-if="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
     <div class= "rounded-lg p-6 w-96 relative z-50">
-      <RegisterUsersComponent />
+      <RegisterUsersComponent :showModal="showModal" @update:showModal="showModal = $event" /> 
     </div>
   </div>
 </template>

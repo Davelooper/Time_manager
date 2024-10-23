@@ -114,6 +114,22 @@ export function biometricAuth(credential: string): Promise<any> {
       throw error; // Lève l'erreur
     });
 }
+export function createAuth(credential: string,iduser: string): Promise<any> {
+  console.log('TESTEJ SUIS PASSE ')
+  return axios.post(`http://localhost:4000/api/users/webauths/${iduser}`, {
+    token: credential 
+
+  })
+    .then(response => {
+      setToken(response.data.token); // Sauvegarde le token dans l'état
+      state.isConnected = true; // Modifie l'état de connexion
+      return response; // Retourne la réponse complète
+    })
+    .catch(error => {
+      console.error('Erreur lors de l\'authentification biométrique:', error);
+      throw error; // Lève l'erreur
+    });
+}
 // Fonction pour déconnecter l'utilisateur
 export function logoutUser(): void {
   state.isConnected = false;
@@ -188,7 +204,7 @@ export function updateUser(user: User, iduser: number): void {
     });
 }
 
-export async function getUserById(id: number): Promise<ManageUsers> {
+export async function getUserById(id: string): Promise<ManageUsers> {
   try {
     const response = await axios.get(`http://localhost:4000/api/users/${id}`);
     return response.data; // Renvoie les données de l'utilisateur
