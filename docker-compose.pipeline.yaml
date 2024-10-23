@@ -18,7 +18,7 @@ services:
     command: >
       bash -c "
         apt-get update &&
-        apt-get install -y esl-erlang elixir docker.io docker-compose &&
+        apt-get install -y erlang elixir docker.io docker-compose &&
         usermod -aG docker jenkins &&
         chown -R jenkins:jenkins /var/jenkins_home &&
         chown jenkins:docker /var/run/docker.sock &&

@@ -1,7 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref,defineProps, defineEmits } from 'vue';
+
 import { createUser, getAllTeams } from "../store/userStore"
 import router from '@/router';
+
+const props = defineProps({
+  showModal: {
+    type: Boolean,
+    default: false // Définit la valeur par défaut de showModal
+  }
+});
+const emit = defineEmits(['update:showModal']);
+
+function closeModal() {
+  emit('update:showModal', false); // Émet l'événement pour fermer la modal
+}
 
 interface User {
     email: string;
@@ -41,6 +54,11 @@ onMounted(() => {
 
 </script>
 <template>
+     <button type="button" 
+    @click="closeModal"
+    class="w-full bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+    close modal
+    </button>
     <div class="flex flex-row justify-center items-center w-full h-full">
         <div class="flex flex-row justify-center items-center w-full h-full">
             <div
