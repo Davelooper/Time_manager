@@ -3,6 +3,8 @@ defmodule BackendWeb.UserSessionController do
 
   alias Backend.Accounts
   alias Backend.Token
+  alias Backend.Repo
+  alias Backend.Accounts.User
 
   def create(conn, params) do
     email = Map.get(params, "email")
@@ -66,6 +68,35 @@ defmodule BackendWeb.UserSessionController do
         conn
         |> put_status(:unauthorized)
         |> json(%{success: false, message: "Invalid WebAuthn token"})
+    end
+  end
+
+  def generate_webauthtoken(conn, %{"userId" => user_id, "token" => %{"code" => token}}) do
+    # Récupérer l'utilisateur en fonction de l'ID
+    case Repo.get(User, user_id) do
+      nil ->
+        # Si l'utilisateur n'est pas trouvé, renvoyer une erreur
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Utilisateur non trouvé"})
+
+      user ->
+        # Mettre à jour l'utilisateur avec le token reçu dans la requête
+        changeset = Ecto.Changeset.change(user, web_auth_token: token)
+
+        case Repo.update(changeset) do
+          {:ok, _updated_user} ->
+            # Si la mise à jour est un succès
+            conn
+            |> put_status(:ok)
+            |> json(%{message: "Token WebAuthn mis à jour avec succès", token: token})
+
+          {:error, changeset} ->
+            # En cas d'erreur lors de la mise à jour
+            conn
+            |> put_status(:unprocessable_entity)
+            |> json(%{error: "Erreur lors de la mise à jour du token", details: changeset})
+        end
     end
   end
 
