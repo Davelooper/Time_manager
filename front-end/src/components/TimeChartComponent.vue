@@ -48,17 +48,14 @@ import {getAllWorkingTimeByUser} from '../store/workingTimeStore';
 
 const decodedToken = getDecodedToken(); 
     const userId = decodedToken.id; 
-    console.log(userId)
-function fetchClocks(iduser: string){
+    const teamId = decodedToken.team_id
 
+function fetchClocks(iduser: string){
  let getAllClocksUser = getClocksByUserId(iduser)
  console.log(getAllClocksUser)
-
 }
-function fetchWorkingTime(){
 
-  const teamId = decodedToken.team_id
-  console.log(teamId)
+function fetchWorkingTime(){
 let getAllWorkingTimeByTeams = getAllWorkingTimeByUser(teamId)
 console.log(getAllWorkingTimeByTeams)
 }

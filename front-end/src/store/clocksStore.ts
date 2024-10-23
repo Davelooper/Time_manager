@@ -36,8 +36,6 @@ export function updateClocks(clocks: Clocks, iduser: number): void {
         });
 }
 export async function getClocksByUserId(iduser: string): Promise<Clocks | null> {
-
-
     return axios.get(`http://localhost:4000/api/clocks/${iduser}`, {
         headers: {
             Authorization: `Bearer ${token}` // Ajouter le token dans l'en-tête
