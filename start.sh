@@ -28,7 +28,7 @@ if [ "$SERVICE_ENV" = "PROD" ]; then
 
   # Relancer et reconstruire les services pour la production
   echo "Redémarrage des services en production..."
-  docker compose -f docker-compose.prod.yaml --env-file .env up -d --build
+  docker compose -f docker-compose.prod.yaml --env-file .env up -d
 
 else
   echo "Lancement de l'environnement de développement..."
