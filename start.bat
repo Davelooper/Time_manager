@@ -18,7 +18,7 @@ if "%SERVICE_ENV%" == "PROD" (
     FOR /F "tokens=*" %%i IN ('docker-compose -f docker-compose.prod.yaml config --services') DO docker rmi %%i
 
     REM Relancer et reconstruire les services pour la production
-    docker-compose -f docker-compose.prod.yaml --env-file .env up -d --build
+    docker-compose -f docker-compose.prod.yaml --env-file .env up -d
 
 ) else (
     echo Lancement de l'environnement de développement...
