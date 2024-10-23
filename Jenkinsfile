@@ -77,7 +77,7 @@ pipeline {
       }
     }
 
-    stage('Login to DockerHub for push') {
+    stage('Login to DockerHub for push on Docker Hub') {
       steps {
         script {
           docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
