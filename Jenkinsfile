@@ -58,7 +58,7 @@ pipeline {
         }
       }
     }
-    stage('Start Database for Tests') {
+    stage('Start Database for Test') {
       steps {
         script {
           echo "Env files"
