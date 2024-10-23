@@ -50,12 +50,41 @@ pipeline {
         }
       }
     }
+      stage('Start Database for Tests') {
+        steps {
+          script {
+            // Démarrer le conteneur Postgres
+            echo "Starting Postgres container for tests"
+            sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
+
+            // Attendre que Postgres soit prêt
+            echo "Waiting for Postgres to be ready..."
+            sh '''
+              until docker exec $(docker-compose -f ${DOCKER_COMPOSE_FILE} ps -q db) pg_isready -h localhost -p 5432 -U ${POSTGRES_USER_DEV}; do
+                echo "Waiting for Postgres..."
+                sleep 2
+              done
+              echo "Postgres is ready!"
+            '''
+          }
+        }
+      }
     stage('Compile Elixir & Elixir Deps') {
       steps {
         script {
           echo "Compiling Elixir"
           sh "cd backend && mix deps.compile"
           sh "cd backend && mix compile"
+          sh "cd backend && "
+        }
+      }
+    }
+    stage('Create and Populate BDD') {
+      steps {
+        script {
+          echo "Create and Populate BDD"
+          sh "cd backend && ecto.create"
+          sh "cd backend && ecto.migrate"
         }
       }
     }
