@@ -26,15 +26,6 @@ pipeline {
         }
       }
     }
-
-    stage('Checkout') {
-      steps {
-        script {
-          git credentialsId: "${GITHUB_CREDENTIALS_ID}", url: 'https://github.com/Davelooper/Time_manager', branch: "${env.BRANCH_NAME}"
-        }
-      }
-    }
-
     stage('Check Docker Versions') {
       steps {
         script {
@@ -43,6 +34,39 @@ pipeline {
         }
       }
     }
+    stage('Checkout') {
+      steps {
+        script {
+          git credentialsId: "${GITHUB_CREDENTIALS_ID}", url: 'https://github.com/Davelooper/Time_manager', branch: "${env.BRANCH_NAME}"
+        }
+      }
+    }
+    stage('Install Elixir Dependencies') {
+      steps {
+        script {
+          echo "Installing Elixir Dependencies"
+          sh "cd backend && mix local.hex --force && mix local.rebar --force"
+          sh "cd backend && mix deps.get"
+        }
+      }
+    }
+    stage('Compile Elixir') {
+      steps {
+        script {
+          echo "Compiling Elixir"
+          sh "cd backend && mix compile"
+        }
+      }
+    }
+    stage('Run Backend Tests (Elixir)') {
+      steps {
+        script {
+          echo "Running Tests"
+          sh "cd backend && mix test"
+        }
+      }
+    }
+
 
     stage('Build Docker Images') {
       steps {
