@@ -28,10 +28,10 @@ pipeline {
           sh '''
             bash -c '
             set -a
-            source ${ENV_FILE}  # Charge les variables depuis .env
-            export $(cat ${ENV_FILE} | xargs)  # Charge les variables pour envsubst
+            source ${ENV_FILE}
+            export $(cat ${ENV_FILE} | xargs)
             envsubst < ${ENV_FILE} > expanded_env_file
-            source expanded_env_file  # Charge les variables étendues
+            source expanded_env_file
             set +a
             '
           '''
