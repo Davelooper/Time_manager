@@ -22,25 +22,30 @@ pipeline {
     stage('Set Docker Compose and Env Variables') {
       steps {
         script {
-          echo "Loading .env file from ${ENV_FILE}"
+          echo "Loading .env file and expanding environment variables"
 
-          // Vérifier si le fichier .env existe
-          def fileExistsCheck = fileExists("${ENV_FILE}")
-          if (!fileExistsCheck) {
-            echo "File ${ENV_FILE} does NOT exist!"
-            error "File ${ENV_FILE} not found!"
-          } else {
-            echo "File ${ENV_FILE} exists, proceeding to load it."
-          }
+          // Charger et étendre les variables d'environnement depuis le fichier .env
+          sh '''
+            set -a
+            source ${ENV_FILE}
+            envsubst < ${ENV_FILE} > expanded_env_file
+            source expanded_env_file
+            set +a
+          '''
 
-          // Charger les variables à partir du fichier .env
-          def envVars = readProperties file: "${ENV_FILE}"
+          // Charger les variables à partir du fichier `.env` étendu
+          def envVars = readProperties file: 'expanded_env_file'
 
           if (envVars == null || envVars.isEmpty()) {
-            error "No environment variables loaded from ${ENV_FILE}!"
+            error "No environment variables loaded from expanded_env_file!"
           }
 
-          echo "Loaded environment variables from ${ENV_FILE}: ${envVars}"
+          echo "Loaded and expanded environment variables:"
+
+          // Afficher les variables chargées pour vérification
+          envVars.each { key, value ->
+            echo "${key}=${value}"
+          }
 
           // Définir les variables en fonction de la branche
           if (env.BRANCH_NAME == 'alex') { // Main branch
