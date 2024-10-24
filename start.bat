@@ -19,7 +19,7 @@ if "%SERVICE_ENV%" == "PROD" (
 
     docker network create "shared-network"
 
-    REM Relancer et reconstruire les services pour la prod
+    REM Relancer et reconstruire les services pour la production
     docker-compose -f docker-compose.prod.yaml --env-file .env up -d
 
 ) else (
