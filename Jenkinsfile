@@ -5,6 +5,7 @@ pipeline {
     GITHUB_CREDENTIALS_ID = 'github_credentials'
     DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
     ENV_FILE = '.env'
+    NETWORK_NAME = 'shared-network'  // Nom du réseau partagé
   }
 
   stages {
@@ -62,6 +63,24 @@ pipeline {
         script {
           echo 'Loaded environment variables:'
           sh 'env | grep -i POSTGRES_'
+        }
+      }
+    }
+    stage('Create Network if not exists') {
+      steps {
+        script {
+          echo "Checking if network ${NETWORK_NAME} exists"
+
+          // Vérifier si le réseau existe
+          def networkExists = sh(script: "docker network ls --filter name=${NETWORK_NAME} -q", returnStdout: true).trim()
+
+          // Si le réseau n'existe pas, le créer
+          if (!networkExists) {
+              echo "Network ${NETWORK_NAME} does not exist. Creating it..."
+              sh "docker network create ${NETWORK_NAME}"
+          } else {
+              echo "Network ${NETWORK_NAME} already exists."
+          }
         }
       }
     }
