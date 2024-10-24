@@ -13,79 +13,46 @@ pipeline {
     stages {
 
     stage('Set Docker Compose and Env Variables') {
-        steps {
-          script {
-            // Charger les variables à partir du fichier .env
-            def envVars = readProperties file: "${ENV_FILE}"
-
-            // Définir les variables en fonction de la branche
-            if (env.BRANCH_NAME == 'alex') { // Main branch
-              echo "Using production Docker Compose and Env"
-              env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
-              // Utiliser les valeurs PROD
-              env.POSTGRES_USER = envVars['POSTGRES_USER_PROD']
-              env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_PROD']
-              env.POSTGRES_DB = envVars['POSTGRES_DB_PROD']
-            } else if (env.BRANCH_NAME == 'prealex') { // Dev branch
-              echo "Using development Docker Compose and Env"
-              env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
-              // Utiliser les valeurs DEV
-              env.POSTGRES_USER = envVars['POSTGRES_USER_DEV']
-              env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_DEV']
-              env.POSTGRES_DB = envVars['POSTGRES_DB_DEV']
-            } else {
-              error "Unsupported branch: ${env.BRANCH_NAME}. Only 'alex' and 'prealex' are supported."
-            }
-
-            // Afficher les valeurs pour debug
-            echo "Postgres User: ${POSTGRES_USER}"
-            echo "Postgres DB: ${POSTGRES_DB}"
-          }
-        }
-      }
-      stage('Check Docker Versions') {
-        steps {
-          script {
-            echo "Checking Docker versions"
-            sh '''docker --version && docker-compose --version'''
-          }
-        }
-      }
-      stage('Checkout') {
-        steps {
-          script {
-            git credentialsId: "${GITHUB_CREDENTIALS_ID}", url: 'https://github.com/Davelooper/Time_manager', branch: "${env.BRANCH_NAME}"
-          }
-        }
-      }
-      stage('Install Elixir Dependencies') {
-        steps {
-          script {
-            echo "Installing Elixir Dependencies"
-            sh "cd backend && mix local.hex --force && mix local.rebar --force"
-            sh "cd backend && mix deps.get"
-          }
-        }
-      }
-      stage('Start Database for Test') {
-      steps { 
+      steps {
         script {
-          echo "Env files"
-          sh "cat ${ENV_FILE}"  // Affiche le contenu du fichier .env pour vérifier
+          echo "Loading .env file from ${ENV_FILE}"
 
-          echo "Starting Postgres container for tests"
-          sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
+          // Vérifier si le fichier .env existe
+          if (!fileExists("${ENV_FILE}")) {
+            error "File ${ENV_FILE} not found!"
+          }
 
-          // Attendre que Postgres soit prêt
-          echo "Waiting for Postgres to be ready..."
-          sh """
-            until docker exec \$(docker-compose -f ${DOCKER_COMPOSE_FILE} ps -q db) pg_isready -h localhost -p 5432 -U ${POSTGRES_USER}; do
-              echo "Waiting for Postgres..."
-              sleep 2
-            done
-            echo "Postgres is ready!"
-          """
+          // Charger les variables à partir du fichier .env
+          def envVars = readProperties file: "${ENV_FILE}"
 
+          if (envVars == null || envVars.isEmpty()) {
+            error "No environment variables loaded from ${ENV_FILE}!"
+          }
+
+          echo "Loaded environment variables from ${ENV_FILE}: ${envVars}"
+
+          // Définir les variables en fonction de la branche
+          if (env.BRANCH_NAME == 'alex') { // Main branch
+            echo "Using production Docker Compose and Env"
+            env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
+            // Utiliser les valeurs PROD
+            env.POSTGRES_USER = envVars['POSTGRES_USER_PROD']
+            env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_PROD']
+            env.POSTGRES_DB = envVars['POSTGRES_DB_PROD']
+          } else if (env.BRANCH_NAME == 'prealex') { // Dev branch
+            echo "Using development Docker Compose and Env"
+            env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
+            // Utiliser les valeurs DEV
+            env.POSTGRES_USER = envVars['POSTGRES_USER_DEV']
+            env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_DEV']
+            env.POSTGRES_DB = envVars['POSTGRES_DB_DEV']
+          } else {
+            error "Unsupported branch: ${env.BRANCH_NAME}. Only 'alex' and 'prealex' are supported."
+          }
+
+          // Afficher les valeurs pour debug
+          echo "Postgres User: ${POSTGRES_USER}"
+          echo "Postgres DB: ${POSTGRES_DB}"
         }
       }
     }
