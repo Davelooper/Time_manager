@@ -4,14 +4,21 @@ pipeline {
   environment {
     GITHUB_CREDENTIALS_ID = 'github_credentials'
     DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
-    ENV_FILE = '.env'
+    ENV_FILE = './.env'
   }
 
 
 
     // Étape pour définir les variables Docker Compose et les variables d'environnement à partir du fichier .env
     stages {
-
+     stage('Check current directory files') {
+      steps {
+        script {
+          echo "Listing files in the current directory:"
+          sh "ls -la"
+        }
+      }
+    }
     stage('Set Docker Compose and Env Variables') {
       steps {
         script {
