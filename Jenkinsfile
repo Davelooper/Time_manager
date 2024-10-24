@@ -19,60 +19,37 @@ pipeline {
         }
       }
     }
-    stage('Set Docker Compose and Env Variables') {
-      steps {
-        script {
-          echo "Loading .env file and expanding environment variables"
+    stage('Load Environment Variables from .env') {
+            steps {
+                script {
+                    echo "Loading environment variables from ${ENV_FILE}"
 
-          // Utiliser explicitement bash pour s'assurer que source fonctionne
-          sh '''
-            bash -c '
-            set -a
-            source ${ENV_FILE}
-            export $(cat ${ENV_FILE} | xargs)
-            envsubst < ${ENV_FILE} > expanded_env_file
-            source expanded_env_file
-            set +a
-            '
-          '''
+                    // Vérifier si le fichier .env existe
+                    if (!fileExists(ENV_FILE)) {
+                        error "File ${ENV_FILE} not found!"
+                    }
 
-          // Charger les variables à partir du fichier `.env` étendu
-          def envVars = readProperties file: 'expanded_env_file'
+                    // Lire le fichier .env en tant que fichier .properties
+                    def envVars = readProperties file: ENV_FILE
 
-          if (envVars == null || envVars.isEmpty()) {
-            error "No environment variables loaded from expanded_env_file!"
-          }
+                    if (envVars == null || envVars.isEmpty()) {
+                        error "No environment variables loaded from ${ENV_FILE}!"
+                    }
 
-          echo "Loaded and expanded environment variables:"
+                    echo "Loaded environment variables:"
 
-          // Afficher les variables chargées pour vérification
-          envVars.each { key, value ->
-            echo "${key}=${value}"
-          }
+                    // Définir les variables dans l'environnement Jenkins
+                    envVars.each { key, value ->
+                        echo "${key}=${value}"
+                        env[key] = value
+                    }
 
-          // Définir les variables en fonction de la branche
-          if (env.BRANCH_NAME == 'alex') { // Main branch
-            echo "Using production Docker Compose and Env"
-            env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
-            env.POSTGRES_USER = envVars['POSTGRES_USER_PROD']
-            env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_PROD']
-            env.POSTGRES_DB = envVars['POSTGRES_DB_PROD']
-          } else if (env.BRANCH_NAME == 'prealex') { // Dev branch
-            echo "Using development Docker Compose and Env"
-            env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
-            env.POSTGRES_USER = envVars['POSTGRES_USER_DEV']
-            env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_DEV']
-            env.POSTGRES_DB = envVars['POSTGRES_DB_DEV']
-          } else {
-            error "Unsupported branch: ${env.BRANCH_NAME}. Only 'alex' and 'prealex' are supported."
-          }
-
-          // Afficher les valeurs pour debug
-          echo "Postgres User: ${POSTGRES_USER}"
-          echo "Postgres DB: ${POSTGRES_DB}"
+                    // Afficher les valeurs pour debug
+                    echo "Postgres User: ${env.POSTGRES_USER_DEV}"
+                    echo "Postgres DB: ${env.POSTGRES_DB_DEV}"
+                }
+            }
         }
-      }
-    }
 
     stage('Compile Elixir & Elixir Deps') {
       steps {
