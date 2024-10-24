@@ -44,3 +44,7 @@ services:
     image: jogoldirus/mon-vuejs-dev
 volumes:
   pgdata:
+networks:
+  default:
+    external:
+      name: shared-network
