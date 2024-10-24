@@ -81,7 +81,7 @@ pipeline {
           // Si le réseau n'existe pas, le créer
           sh "docker network inspect shared-network >nul 2>&1 || docker network create shared-network"
           // if (!networkExists) {
-          //     echo "Network ${NETWORK_NAME} does not exist. Creating it..."
+          //     echo "Network ${NETWORK_NAME} does not exist. Creating it..."  d
           //     sh "docker network create ${NETWORK_NAME}"
           // } else {
 
