@@ -22,7 +22,7 @@ services:
       bash -c "
         apt-get update &&
         apt-get install -y make build-essential erlang-dev elixir &&
-        usermod -aG docker jenkins &&
+        usermod -aG jenkins &&
         chown -R jenkins:jenkins /var/jenkins_home &&
         chown jenkins:docker /var/run/docker.sock &&
         chmod 666 /var/run/docker.sock &&
