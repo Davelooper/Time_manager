@@ -24,9 +24,7 @@ pipeline {
         script {
           echo "Loading environment variables from .env"
           sh '''
-            set -o allexport
-            . ${ENV_FILE}
-            set +o allexport
+            bash -c 'set -o allexport; source ${ENV_FILE}; set +o allexport'
           '''
         }
       }
