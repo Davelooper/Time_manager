@@ -51,9 +51,8 @@ const showModal = ref(false);
 function toggleModal(){
   showModal.value = !showModal.value;
 }
-  const decodedToken = getDecodedToken();
+const decodedToken = getDecodedToken();
 
-console.log(decodedToken.role, 'LALA LALA')
 
 </script>
 
