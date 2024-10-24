@@ -13,8 +13,6 @@ services:
       - jenkins_home:/var/jenkins_home
       - //var/run/docker.sock:/var/run/docker.sock # Monte le socket Docker
       # - "C:/Program Files/Docker/Docker/resources/bin:/usr/local/bin" # Monte Docker dans le conteneur Jenkins
-    networks:
-      - app-network
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
     command: >
