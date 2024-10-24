@@ -79,13 +79,14 @@ pipeline {
           //   sh "docker network rm ${NETWORK_NAME}"
           // }
           // Si le réseau n'existe pas, le créer
-          if (!networkExists) {
-              echo "Network ${NETWORK_NAME} does not exist. Creating it..."
-              sh "docker network create ${NETWORK_NAME}"
-          } else {
+          sh "docker network inspect shared-network >nul 2>&1 || docker network create shared-network"
+          // if (!networkExists) {
+          //     echo "Network ${NETWORK_NAME} does not exist. Creating it..."
+          //     sh "docker network create ${NETWORK_NAME}"
+          // } else {
 
-              echo "Network ${NETWORK_NAME} already exists."
-          }
+          //     echo "Network ${NETWORK_NAME} already exists."
+          // }
         }
       }
     }
