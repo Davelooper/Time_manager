@@ -16,7 +16,6 @@ pipeline {
         }
       }
     }
-
     stage('Load environment variables') {
       steps {
         script {
@@ -58,7 +57,6 @@ pipeline {
         }
       }
     }
-
     stage('Show loaded env variable') {
       steps {
         script {
@@ -67,7 +65,24 @@ pipeline {
         }
       }
     }
+    stage('Start Database for Test') {
+      steps {
+        script {
+          echo "Starting Postgres container for tests"
+          sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
 
+          // Attendre que Postgres soit prêt
+          echo "Waiting for Postgres to be ready..."
+          sh """
+            until docker exec \$(docker-compose -f ${DOCKER_COMPOSE_FILE} ps -q db) pg_isready -h db -p 5432 -U ${POSTGRES_USER}; do
+              echo "Waiting for Postgres..."
+              sleep 2
+            done
+            echo "Postgres is ready!"
+          """
+        }
+      }
+    }
     stage('Compile Elixir & Elixir Deps') {
       steps {
         script {
@@ -79,6 +94,8 @@ pipeline {
         }
       }
     }
+
+    stage
 
     stage('Create and Populate BDD') {
       steps {
