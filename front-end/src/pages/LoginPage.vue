@@ -129,7 +129,6 @@ async function connectWebAuth(): Promise<void> {
         }
 
         const credential = await navigator.credentials.get({ publicKey })
-
         if (credential) {
             const credentialData = {
                 id: credential.id,
