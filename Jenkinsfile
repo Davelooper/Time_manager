@@ -22,34 +22,42 @@ pipeline {
     stage('Set Docker Compose and Env Variables') {
       steps {
         script {
+          echo "Loading .env file from ${ENV_FILE}"
+
+          // Vérifier si le fichier .env existe
+          if (!fileExists("${ENV_FILE}")) {
+            error "File ${ENV_FILE} not found!"
+          }
+
+          // Charger les variables à partir du fichier .env
+          def envVars = readProperties file: "${ENV_FILE}"
+
+          if (envVars == null || envVars.isEmpty()) {
+            error "No environment variables loaded from ${ENV_FILE}!"
+          }
+
+          echo "Loaded environment variables from ${ENV_FILE}: ${envVars}"
+
           // Définir les variables en fonction de la branche
           if (env.BRANCH_NAME == 'alex') { // Main branch
             echo "Using production Docker Compose and Env"
             env.DOCKER_COMPOSE_FILE = 'docker-compose.prod.yaml'
-            withCredentials([
-              string(credentialsId: 'POSTGRES_USER_PROD', variable: 'POSTGRES_USER'),
-              string(credentialsId: 'POSTGRES_PASSWORD_PROD', variable: 'POSTGRES_PASSWORD'),
-              string(credentialsId: 'POSTGRES_DB_PROD', variable: 'POSTGRES_DB')
-            ]) {
-              // Les variables sont disponibles ici
-            }
+            env.POSTGRES_USER = envVars['POSTGRES_USER_PROD']
+            env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_PROD']
+            env.POSTGRES_DB = envVars['POSTGRES_DB_PROD']
           } else if (env.BRANCH_NAME == 'prealex') { // Dev branch
             echo "Using development Docker Compose and Env"
             env.DOCKER_COMPOSE_FILE = 'docker-compose.dev.yaml'
-            withCredentials([
-              string(credentialsId: 'POSTGRES_USER_DEV', variable: 'POSTGRES_USER'),
-              string(credentialsId: 'POSTGRES_PASSWORD_DEV', variable: 'POSTGRES_PASSWORD'),
-              string(credentialsId: 'POSTGRES_DB_DEV', variable: 'POSTGRES_DB')
-            ]) {
-              // Les variables sont disponibles ici
-            }
+            env.POSTGRES_USER = envVars['POSTGRES_USER_DEV']
+            env.POSTGRES_PASSWORD = envVars['POSTGRES_PASSWORD_DEV']
+            env.POSTGRES_DB = envVars['POSTGRES_DB_DEV']
           } else {
             error "Unsupported branch: ${env.BRANCH_NAME}. Only 'alex' and 'prealex' are supported."
           }
 
-          // Afficher les valeurs pour debug (évite d'afficher les mots de passe)
-          echo "Postgres User: ${env.POSTGRES_USER}"
-          echo "Postgres DB: ${env.POSTGRES_DB}"
+          // Afficher les valeurs pour debug
+          echo "Postgres User: ${POSTGRES_USER}"
+          echo "Postgres DB: ${POSTGRES_DB}"
         }
       }
     }
