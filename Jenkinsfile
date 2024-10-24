@@ -154,11 +154,11 @@ pipeline {
     }
   }
 
-  post {
-    always {
-      script {
-        sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} down --volumes || true'
-      }
-    }
-  }
+  // post {
+  //   always {
+  //     script {
+  //       sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} down --volumes || true'
+  //     }
+  //   }
+  // }
 }
