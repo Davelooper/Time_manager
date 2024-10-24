@@ -25,8 +25,12 @@ pipeline {
           echo "Loading .env file from ${ENV_FILE}"
 
           // Vérifier si le fichier .env existe
-          if (!fileExists("${ENV_FILE}")) {
+          def fileExistsCheck = fileExists("${ENV_FILE}")
+          if (!fileExistsCheck) {
+            echo "File ${ENV_FILE} does NOT exist!"
             error "File ${ENV_FILE} not found!"
+          } else {
+            echo "File ${ENV_FILE} exists, proceeding to load it."
           }
 
           // Charger les variables à partir du fichier .env
