@@ -16,6 +16,8 @@ if "%SERVICE_ENV%" == "PROD" (
 
     @REM REM Supprimer les images associées aux services de docker-compose.prod.yaml
     @REM FOR /F "tokens=*" %%i IN ('docker-compose -f docker-compose.prod.yaml config --services') DO docker rmi %%i
+    docker network rm shared-network
+    docker network create "shared-network"
 
     REM Relancer et reconstruire les services pour la production
     docker compose -f docker-compose.pipeline.yaml --env-file .env up -d --build
@@ -28,7 +30,9 @@ if "%SERVICE_ENV%" == "PROD" (
 
     @REM REM Supprimer les images associées aux services de docker-compose.dev.yaml
     @REM FOR /F "tokens=*" %%i IN ('docker-compose -f docker-compose.dev.yaml config --services') DO docker rmi %%i
-
+    docker network rm shared-network
+    docker network create "shared-network"
+    
     REM Relancer et reconstruire les services pour le développement
     docker compose -f docker-compose.pipeline.yaml --env-file .env up -d --build
 )

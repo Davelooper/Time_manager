@@ -1,3 +1,6 @@
+networks:
+  shared-network:
+    external: true
 services:
   elixir:
     build:
@@ -11,7 +14,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER_DEV}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_DEV}
-      POSTGRES_HOST: localhost
+      POSTGRES_HOST: db
       POSTGRES_DB: ${POSTGRES_DB_DEV}
       MIX_ENV: dev
       DATABASE_URL: ${DATABASE_URL_DEV}
@@ -20,6 +23,8 @@ services:
       - './backend:/backend'
       - '/backend/deps'
       - '/backend/_build'
+    networks:
+      - shared-network
   db:
     image: 'postgres:11-alpine'
     restart: always
@@ -31,6 +36,8 @@ services:
       - '5432:5432'
     volumes:
       - 'pgdata:/var/lib/postgresql/data'
+    networks:
+      - shared-network
   vuejs:
     build:
       context: ./front-end
@@ -42,9 +49,7 @@ services:
       - './front-end:/front-end'
       - /front-end/node_modules
     image: jogoldirus/mon-vuejs-dev
+    networks:
+      - shared-network
 volumes:
   pgdata:
-networks:
-  default:
-    external:
-      name: shared-network
