@@ -1,3 +1,6 @@
+networks:
+  shared-network:
+    external: true
 services:
   elixir:
     build:
@@ -50,6 +53,3 @@ services:
       - shared-network
 volumes:
   pgdata:
-networks:
-  shared-network:
-    external: true
