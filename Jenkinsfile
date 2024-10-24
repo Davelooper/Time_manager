@@ -94,9 +94,6 @@ pipeline {
         }
       }
     }
-
-    stage
-
     stage('Create and Populate BDD') {
       steps {
         script {
