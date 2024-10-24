@@ -16,7 +16,7 @@ echo "POSTGRES_DB: $POSTGRES_DB"
 echo "Utilisateur actuel : $(whoami)"
 ls -l ./config
 
-# Recuperer les dependances
+# Recuperer les dependances 
 mix deps.get
 
 # Attendre que PostgreSQL soit prêt
