@@ -19,38 +19,18 @@ pipeline {
         }
       }
     }
-    stage('Load Environment Variables from .env') {
-            steps {
-                script {
-                    echo "Loading environment variables from ${ENV_FILE}"
-
-                    // Vérifier si le fichier .env existe
-                    if (!fileExists(ENV_FILE)) {
-                        error "File ${ENV_FILE} not found!"
-                    }
-
-                    // Lire le fichier .env en tant que fichier .properties
-                    def envVars = readProperties file: ENV_FILE
-
-                    if (envVars == null || envVars.isEmpty()) {
-                        error "No environment variables loaded from ${ENV_FILE}!"
-                    }
-
-                    echo "Loaded environment variables:"
-
-                    // Définir les variables dans l'environnement Jenkins
-                    envVars.each { key, value ->
-                        echo "${key}=${value}"
-                        env[key] = value
-                    }
-
-                    // Afficher les valeurs pour debug
-                    echo "Postgres User: ${env.POSTGRES_USER_DEV}"
-                    echo "Postgres DB: ${env.POSTGRES_DB_DEV}"
-                }
-            }
+    stage('Load .env Variables') {
+      steps {
+        script {
+          echo "Loading environment variables from .env"
+          sh '''
+            set -o allexport
+            source ${ENV_FILE}
+            set +o allexport
+          '''
         }
-
+      }
+    }
     stage('Compile Elixir & Elixir Deps') {
       steps {
         script {
