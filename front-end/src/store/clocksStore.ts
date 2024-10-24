@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {getToken} from './userStore'
-const token = getToken(); // Récupérer le token JWT
+const token = getToken();
 
 if (!token) {
     console.error('Aucun token disponible');
