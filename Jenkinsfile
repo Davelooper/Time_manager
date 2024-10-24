@@ -5,7 +5,7 @@ pipeline {
     GITHUB_CREDENTIALS_ID = 'github_credentials'
     DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
     ENV_FILE = '.env'
-    NETWORK_NAME = 'shared-network'  // Nom du réseau partag
+    NETWORK_NAME = 'shared-network'  // Nom du réseau partagé
   }
 
   stages {
