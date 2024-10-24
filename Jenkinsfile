@@ -24,13 +24,16 @@ pipeline {
         script {
           echo "Loading .env file and expanding environment variables"
 
-          // Charger et étendre les variables d'environnement depuis le fichier .env
+          // Utiliser explicitement bash pour s'assurer que source fonctionne
           sh '''
+            bash -c '
             set -a
-            source ${ENV_FILE}
+            source ${ENV_FILE}  # Charge les variables depuis .env
+            export $(cat ${ENV_FILE} | xargs)  # Charge les variables pour envsubst
             envsubst < ${ENV_FILE} > expanded_env_file
-            source expanded_env_file
+            source expanded_env_file  # Charge les variables étendues
             set +a
+            '
           '''
 
           // Charger les variables à partir du fichier `.env` étendu
