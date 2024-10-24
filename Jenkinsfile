@@ -32,6 +32,8 @@ pipeline {
     stage('Compile Elixir & Elixir Deps') {
       steps {
         script {
+          echo "Installing Elixir Dependencies"
+          sh "cd backend && mix deps.get"
           echo "Compiling Elixir"
           sh "cd backend && mix deps.compile"
           sh "cd backend && mix compile"
