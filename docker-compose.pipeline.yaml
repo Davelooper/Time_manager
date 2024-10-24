@@ -14,14 +14,14 @@ services:
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-      - //var/run/docker.sock:/var/run/docker.sock # Monte le socket Docker
+      - /var/run/docker.sock:/var/run/docker.sock # Monte le socket Docker
       # - "C:/Program Files/Docker/Docker/resources/bin:/usr/local/bin" # Monte Docker dans le conteneur Jenkins
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
     command: >
       bash -c "
         apt-get update &&
-        apt-get install -y make build-essential erlang-dev elixir docker.io docker-compose &&
+        apt-get install -y make build-essential erlang-dev elixir &&
         usermod -aG docker jenkins &&
         chown -R jenkins:jenkins /var/jenkins_home &&
         chown jenkins:docker /var/run/docker.sock &&

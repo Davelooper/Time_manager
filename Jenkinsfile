@@ -66,30 +66,6 @@ pipeline {
         }
       }
     }
-    stage('Create Network if not exists') {
-      steps {
-        script {
-          echo "Checking if network ${NETWORK_NAME} exists"
-
-          // Vérifier si le réseau existe
-          def networkExists = sh(script: "docker network ls --filter name=${NETWORK_NAME} -q", returnStdout: true).trim()
-          // if(networkExists) {
-          //   // Supprimer le réseau
-          //   // echo "Network ${NETWORK_NAME} already exists. Removing it..."
-          //   sh "docker network rm ${NETWORK_NAME}"
-          // }
-          // Si le réseau n'existe pas, le créer
-          sh "docker network inspect shared-network >nul 2>&1 || docker network create shared-network"
-          // if (!networkExists) {
-          //     echo "Network ${NETWORK_NAME} does not exist. Creating it..."  d
-          //     sh "docker network create ${NETWORK_NAME}"
-          // } else {
-
-          //     echo "Network ${NETWORK_NAME} already exists."
-          // }
-        }
-      }
-    }
     stage('Start Database for Test') {
       steps {
         script {
