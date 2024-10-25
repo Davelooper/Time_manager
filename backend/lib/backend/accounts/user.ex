@@ -147,4 +147,42 @@ defmodule Backend.Accounts.User do
       false
     end
   end
+
+  @doc """
+  Changeset pour la mise à jour d'un utilisateur.
+  """
+  def update_changeset(user, attrs) do
+    # Définissez les champs autorisés à être mis à jour
+    # Ajoutez d'autres champs si nécessaire
+    allowed_fields = [:email, :username, :role, :team_id]
+
+    user
+    |> cast(attrs, allowed_fields)
+    |> validate_optional_fields(attrs)
+  end
+
+  defp validate_optional_fields(changeset, attrs) do
+    changeset
+    |> maybe_validate_length(:name, attrs, min: 2)
+    |> maybe_validate_format(:email, attrs, ~r/@/)
+    |> maybe_validate_length(:username, attrs, min: 3)
+
+    # Ajoutez d'autres validations si nécessaire
+  end
+
+  defp maybe_validate_length(changeset, field, attrs, opts) do
+    if Map.has_key?(attrs, Atom.to_string(field)) do
+      validate_length(changeset, field, opts)
+    else
+      changeset
+    end
+  end
+
+  defp maybe_validate_format(changeset, field, attrs, regex) do
+    if Map.has_key?(attrs, Atom.to_string(field)) do
+      validate_format(changeset, field, regex)
+    else
+      changeset
+    end
+  end
 end

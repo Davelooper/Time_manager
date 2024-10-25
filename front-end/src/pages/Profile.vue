@@ -19,7 +19,7 @@
         </option>
       </Input>
     </div>
-    <Tabs :tabs="tabs" />
+    <Tabs v-if="selectedUser" :tabs="tabs" />
   </div>
 </template>
 

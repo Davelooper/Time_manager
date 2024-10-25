@@ -104,7 +104,7 @@ const handleInput = () => {
 
 const handleSave = async () => {
   try {
-    await props.onClick();
+    await props.onClick(value.value);
     defaultValue.value = value.value;
   } catch (error) {
     value.value = defaultValue.value;
