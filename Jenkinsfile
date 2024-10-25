@@ -88,7 +88,7 @@ pipeline {
       steps {
         script {
           echo "Starting Postgres container for tests"
-          sh "docker compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up db --wait --no-cache"
+          sh "docker compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up db --wait  --force-recreate "
 
           // Attendre que Postgres soit prêt
           echo "Waiting for Postgres to be ready..."
