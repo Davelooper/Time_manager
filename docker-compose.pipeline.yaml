@@ -19,30 +19,12 @@ services:
       JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
     command: >
       bash -c "
-        # Mettre à jour et installer les dépendances nécessaires
         apt-get update &&
-        apt-get install -y curl gnupg lsb-release &&
-
-        # Ajouter le dépôt Docker officiel
-        mkdir -p /etc/apt/keyrings &&
-        curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg &&
-        echo 'deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable' | tee /etc/apt/sources.list.d/docker.list > /dev/null &&
-        
-        # Installer Docker depuis les sources officielles
-        apt-get update &&
-        apt-get install -y docker-ce docker-ce-cli containerd.io &&
-
-        # Installer Docker Compose V2 en tant que plugin CLI
-        mkdir -p /usr/lib/docker/cli-plugins &&
-        curl -SL https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-$(uname -m) -o /usr/lib/docker/cli-plugins/docker-compose &&
-        chmod +x /usr/lib/docker/cli-plugins/docker-compose &&
-
-        # Ajouter l'utilisateur Jenkins au groupe Docker et définir les permissions sur le socket Docker
+        apt-get install -y make build-essential erlang-dev elixir docker.io docker-engine &&
         usermod -aG docker jenkins &&
+        chown -R jenkins:jenkins /var/jenkins_home &&
         chown jenkins:docker /var/run/docker.sock &&
         chmod 666 /var/run/docker.sock &&
-
-        # Démarrer Jenkins
         su jenkins -c '/usr/local/bin/jenkins.sh'
       "
 volumes:
