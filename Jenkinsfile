@@ -17,6 +17,16 @@ pipeline {
         }
       }
     }
+    stage('Check docker version') {
+      steps {
+        script {
+          echo 'Checking Docker version'
+          sh 'docker --version'
+          echo 'Checking Docker Compose version'
+          sh 'docker compose --version'
+        }
+      }
+    }
     stage('Load environment variables') {
       steps {
         script {
