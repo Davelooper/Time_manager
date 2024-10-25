@@ -76,6 +76,14 @@ pipeline {
         }
       }
     }
+    stage('Setup Docker Network') {
+      steps {
+        script {
+          echo "Creating shared network ${NETWORK_NAME}"
+          sh "docker network create ${NETWORK_NAME} || true"
+        }
+      }
+    }
     stage('Start Database for Test') {
       steps {
         script {
