@@ -22,19 +22,22 @@ services:
         # Mettre à jour les paquets et installer les dépendances pour Docker
         apt-get update &&
         apt-get install -y ca-certificates curl &&
-        
+
         # Ajouter la clé GPG officielle de Docker
         install -m 0755 -d /etc/apt/keyrings &&
         curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc &&
         chmod a+r /etc/apt/keyrings/docker.asc &&
-        
-        # Ajouter le dépôt officiel Docker aux sources Apt
-        echo 'deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo $VERSION_CODENAME) stable' | tee /etc/apt/sources.list.d/docker.list > /dev/null &&
-        
+
+        # Définir le contenu du dépôt dans une variable
+        DOCKER_REPO='deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo $VERSION_CODENAME) stable' &&
+
+        # Écrire le contenu dans le fichier de liste des sources
+        echo \"$DOCKER_REPO\" | tee /etc/apt/sources.list.d/docker.list > /dev/null &&
+
         # Mettre à jour les sources et installer Docker et ses plugins
         apt-get update &&
         apt-get install -y make build-essential erlang-dev elixir docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin &&
-        
+
         # Démarrer Jenkins
         su jenkins -c '/usr/local/bin/jenkins.sh'
       "
