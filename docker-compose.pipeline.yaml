@@ -1,5 +1,4 @@
-networks:
-  - shared-network # external: true
+networks: shared-network # external: true
 services:
   jenkins:
     image: jenkins/jenkins:lts
