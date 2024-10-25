@@ -70,12 +70,12 @@ pipeline {
       steps {
         script {
           echo "Starting Postgres container for tests"
-          sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
+          sh "docker compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
 
           // Attendre que Postgres soit prêt
           echo "Waiting for Postgres to be ready..."
           sh """
-            until docker exec \$(docker-compose -f ${DOCKER_COMPOSE_FILE} ps -q db) pg_isready -h db -p 5432 -U ${POSTGRES_USER}; do
+            until docker exec \$(docker compose -f ${DOCKER_COMPOSE_FILE} ps -q db) pg_isready -h db -p 5432 -U ${POSTGRES_USER}; do
               echo "Waiting for Postgres..."
               sleep 2
             done
@@ -118,7 +118,7 @@ pipeline {
       steps {
         script {
           echo "Building Docker Images using ${DOCKER_COMPOSE_FILE}"
-          sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} build"
+          sh "docker compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} build"
         }
       }
     }
@@ -128,7 +128,7 @@ pipeline {
         script {
           docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
             echo 'Pushing Docker Images'
-            sh "docker-compose -f ${DOCKER_COMPOSE_FILE} push"
+            sh "docker compose -f ${DOCKER_COMPOSE_FILE} push"
             echo 'Docker Images pushed to DockerHub'
           }
         }
