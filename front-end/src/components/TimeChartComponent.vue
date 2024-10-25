@@ -45,15 +45,6 @@ interface HoursWorkedPerDay {
   Sunday: number;
 }
 
-interface Clocks {
-  Monday: number;
-  Tuesday: number;
-  Wednesday: number;
-  Thursday: number;
-  Friday: number;
-  Saturday: number;
-  Sunday: number;
-}
 
 const decodedToken = getDecodedToken();
 const userId = decodedToken.id;
@@ -155,6 +146,20 @@ async function fetchWorkingTime(idteam: string): Promise<HoursWorkedPerDay> {
   }
 }
 
+function calculateWorkingTimeByWeek(workingTimes: { start: string; end: string }[]): number[] {
+    const hoursPerWeek = [0, 0, 0, 0]; // Pour stocker les heures par semaine
+
+    workingTimes.forEach(({ start, end }) => {
+        const date = new Date(start);
+        const week = Math.floor((date.getDate() - 1) / 7); // Calcul de la semaine (0 à 3)
+        const hoursWorked = calculateWorkingHours(start, end);
+        
+        hoursPerWeek[week] += hoursWorked;
+    });
+
+    return hoursPerWeek; // Retourne les heures pour chaque semaine
+}
+
 function calculateWorkingHours(start: string, end: string): number {
   const startTime = new Date(start);
   const endTime = new Date(end);
@@ -168,9 +173,14 @@ const chartDataMonth: ChartData<'pie'> = {
   labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
   datasets: [
     {
-      label: 'heures travaillées',
+      label: 'Clock months',
       backgroundColor: ['#ff9523', '#ffe177', '#ff7795', '#161616'],
-      data: [30, 45, 40, 35],
+      data: [0, 0, 0, 0],
+    },
+    {
+      label: 'working hours',
+      backgroundColor: ['#ff9523', '#ffe177', '#ff7795', '#161616'],
+      data: [0, 0, 0, 0],
     },
   ],
 };
@@ -304,13 +314,59 @@ async function updateChartData(iduser: string, idteam: string) {
   }
 }
 
+async function updateChartDataByMonth(iduser: string, idteam: string) {
+  try {
+    // Récupérer les données de pointage (clocks) et de temps de travail (workingTime)
+    const clocksData = await fetchClocks(iduser);
+    const workingTimeData = await fetchWorkingTime(idteam);
 
+    // Définir un tableau pour stocker les heures travaillées et les heures de travail par semaine
+    const hoursWorkedPerWeek = [0, 0, 0, 0]; // Heures travaillées par semaine
+    const workingHoursPerWeek = [0, 0, 0, 0]; // Heures de travail par semaine
+
+    // Logique pour distribuer les heures travaillées par semaine
+    Object.entries(clocksData).forEach(([day, hoursWorked]) => {
+      const weekIndex = getWeekIndexFromDay(day);
+      if (weekIndex >= 0) {
+        hoursWorkedPerWeek[weekIndex] += hoursWorked; // Ajoute les heures travaillées
+      }
+    });
+
+    Object.entries(workingTimeData).forEach(([day, hours]) => {
+      const weekIndex = getWeekIndexFromDay(day);
+      if (weekIndex >= 0) {
+        workingHoursPerWeek[weekIndex] += hours; // Ajoute les heures de travail
+      }
+    });
+
+    // Mettre à jour le graphique avec les heures travaillées et les heures de travail par semaine
+    chartDataMonth.datasets[0].data = hoursWorkedPerWeek;  // Heures travaillées
+    chartDataMonth.datasets[1].data = workingHoursPerWeek; // Heures de travail
+
+    console.log('Monthly chart data updated:', chartDataMonth);
+  } catch (error) {
+    console.error('Error updating monthly chart data:', error);
+  }
+}
+
+
+function getWeekIndexFromDay(day: string): number {
+  const weekMap: { [key: string]: number } = {
+    Monday: 0,
+    Tuesday: 0,
+    Wednesday: 0,
+    Thursday: 0,
+    Friday: 0,
+    Saturday: 1,
+    Sunday: 1,
+  };
+  return weekMap[day] !== undefined ? weekMap[day] : -1; // Renvoie -1 si le jour n'est pas trouvé
+}
 
 onMounted(() => {
   updateChartData(userId, teamId);
+  updateChartDataByMonth(userId,teamId)
 });
-
-
 </script>
 
 <style scoped>

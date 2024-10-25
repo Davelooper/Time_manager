@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="flex flex-col md:flex-row justify-center gap-6">
-      <TimeChartComponent />  
+      <DaysJsComponent />  
     </div>
   </div>
 </template>
@@ -23,6 +23,7 @@ import { getDecodedToken } from "../store/userStore";
 import BatPing from "../components/BatPing.vue";
 import TimeChartComponent from "@/components/TimeChartComponent.vue";
 import ProgressDays from "@/components/ProgressDays.vue";
+import DaysJsComponent from "./DaysJsComponent.vue";
 
 const decodedToken = getDecodedToken(); 
 const username = decodedToken.username; 
