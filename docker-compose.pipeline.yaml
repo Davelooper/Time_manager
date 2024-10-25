@@ -20,7 +20,7 @@ services:
     command: >
       bash -c "
         apt-get update &&
-        apt-get install -y make build-essential erlang-dev elixir &&
+        apt-get install -y make build-essential erlang-dev elixir docker.io &&
         usermod -aG docker jenkins &&
         chown -R jenkins:jenkins /var/jenkins_home &&
         chown jenkins:docker /var/run/docker.sock &&
