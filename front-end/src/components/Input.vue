@@ -9,6 +9,7 @@
         v-model="value"
         :placeholder="placeholder"
         :disabled="disabled"
+        @input="handleInput"
         class="p-2 my-2 border-2 text-amber-400 border-gray-300 rounded-lg focus:outline-none focus:outline-amber-400 flex-grow-[3] text-base md:text-xl"
       />
       <select
@@ -16,12 +17,13 @@
         :id="randomId"
         v-model="value"
         :disabled="disabled"
+        @change="handleInput"
         class="p-2 my-2 border-2 text-amber-400 border-gray-300 rounded-lg focus:outline-none focus:outline-amber-400 flex-grow-[3] text-base md:text-xl"
       >
         <slot></slot>
       </select>
       <Button
-        v-if="defaultValue !== value"
+        v-if="(defaultValue !== value) && needToSave"
         :onClick="handleSave"
         text="Save"
         type="contained"
@@ -35,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Button from './Button.vue';
 
 const props = defineProps({
@@ -51,6 +53,10 @@ const props = defineProps({
       await new Promise((resolve) => setTimeout(resolve, 1000));
     },
   },
+  onChange: {
+    type: Function,
+    required: false,
+  },
   placeholder: {
     type: String,
     required: false,
@@ -59,11 +65,6 @@ const props = defineProps({
   label: {
     type: String,
     required: false,
-  },
-  updatable: {
-    type: Boolean,
-    required: false,
-    default: false,
   },
   type: {
     type: String,
@@ -75,11 +76,31 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  needToSave: {
+    type: Boolean,
+    required: false,
+    default: true,
+  }
 });
 
+const emit = defineEmits(['update:value']);
+watch(
+  () => props.value,
+  (newVal) => {
+    value.value = newVal;
+    defaultValue.value = newVal;
+  }
+);
 const value = ref(props.value);
 const defaultValue = ref(props.value);
 const randomId = Math.random().toString(36).substring(7);
+
+const handleInput = () => {
+  emit('update:value', value.value);
+  if (props.onChange) {
+    props.onChange(value.value);
+  }
+};
 
 const handleSave = async () => {
   try {
