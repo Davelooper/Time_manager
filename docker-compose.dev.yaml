@@ -1,6 +1,6 @@
 networks:
   shared-network:
-    # external: true
+    external: true
 services:
   elixir:
     build:
