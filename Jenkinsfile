@@ -70,11 +70,11 @@ pipeline {
       steps {
         script {
           echo "Starting Postgres container for tests"
-          sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} build --no-cache db"
-          echo 'Image db Container builded'
-          sh "docker-compose -f ${DOCKER_COMPOSE_FILE} --env-file ${ENV_FILE} up -d db"
-          echo 'Trop bien le container db est up :) :) :) :) :) :) :)'
-        } 
+          sh docker-compose -f docker-compose.dev.yaml --env-file .env build --no-cache db
+          echo "Build postgres container"
+          sh docker-compose -f docker-compose.dev.yaml --env-file .env up -d db
+          echo "Postgres container started"
+
 
           // Attendre que Postgres soit prêt
           echo "Waiting for Postgres to be ready..."
