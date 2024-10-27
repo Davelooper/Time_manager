@@ -1,6 +1,11 @@
+networks:
+  shared-network:
+    external: true
 services:
   jenkins:
     image: jenkins/jenkins:lts
+    networks:
+      - shared-network
     user: root
     privileged: true
     container_name: jenkins
@@ -9,25 +14,29 @@ services:
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-      - //var/run/docker.sock:/var/run/docker.sock # Monte le socket Docker
+      - /var/run/docker.sock:/var/run/docker.sock # Monte le socket Docker
       # - "C:/Program Files/Docker/Docker/resources/bin:/usr/local/bin" # Monte Docker dans le conteneur Jenkins
-    networks:
-      - app-network
     environment:
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
     command: >
       bash -c "
+        # Mettre à jour les paquets et installer les dépendances pour Docker
         apt-get update &&
-        apt-get install -y make build-essential erlang-dev elixir docker.io docker-compose &&
-        usermod -aG docker jenkins &&
-        chown -R jenkins:jenkins /var/jenkins_home &&
-        chown jenkins:docker /var/run/docker.sock &&
-        chmod 666 /var/run/docker.sock &&
+        apt-get install -y ca-certificates curl gnupg lsb-release &&
+
+        # Ajouter la clé publique de Docker en utilisant apt-key
+        curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - &&
+
+        # Ajouter le dépôt officiel Docker aux sources Apt
+        echo \"deb [arch=\$(dpkg --print-architecture)] https://download.docker.com/linux/debian \$(lsb_release -cs) stable\" | tee /etc/apt/sources.list.d/docker.list > /dev/null &&
+
+        # Mettre à jour les sources et installer Docker, Elixir, et leurs plugins
+        apt-get update &&
+        apt-get install -y make build-essential erlang-dev elixir docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin &&
+
+        # Démarrer Jenkins
         su jenkins -c '/usr/local/bin/jenkins.sh'
       "
+
 volumes:
   jenkins_home: # Volume pour persister les données de Jenkins
-networks:
-  default:
-    external:
-      name: shared-network
