@@ -1,11 +1,11 @@
 <template>
   <div class="border-gray-200 rounded-lg text-center shadow p-5 dark:border-gray-700">
     <ul class="flex border-b text-center">
-      <li @click="activeTab = 1" class="cursor-pointer py-2 px-4 text-gray-600 dark:text-gray-400 border-b-2"
+      <li id="month" @click="activeTab = 1" class="cursor-pointer py-2 px-4 text-gray-600 dark:text-gray-400 border-b-2"
         :class="activeTab === 1 ? 'border-blue-500 text-blue-500' : 'border-transparent'">
         Monthly
       </li>
-      <li @click="activeTab = 2" class="cursor-pointer py-2 px-4 text-gray-600 dark:text-gray-400 border-b-2"
+      <li id="week" @click="activeTab = 2" class="cursor-pointer py-2 px-4 text-gray-600 dark:text-gray-400 border-b-2"
         :class="activeTab === 2 ? 'border-blue-500 text-blue-500' : 'border-transparent'">
         Weekly
       </li>
