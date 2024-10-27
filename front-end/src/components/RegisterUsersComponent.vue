@@ -44,7 +44,8 @@ async function registerForm() {
   console.log("REGISTER");
   try {
     await createUser(user.value);
-    router.push('/workingtimes');
+    // router.push('/dashboard');
+    closeModal();
   } catch (error) {
     console.error('Erreur lors de la création du compte:', error);
   }

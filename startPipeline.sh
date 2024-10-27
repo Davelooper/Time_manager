@@ -15,6 +15,8 @@ if [ "$SERVICE_ENV" = "PROD" ]; then  # Remplacer == par =
     # Arrêter et supprimer les conteneurs associés à docker-compose.pipeline.yaml
     docker compose -f docker-compose.pipeline.yaml --env-file .env down
 
+    docker network create "shared-network" || true
+
     # Relancer et reconstruire les services pour la production
     docker compose -f docker-compose.pipeline.yaml --env-file .env up -d --build
 
@@ -23,6 +25,8 @@ else
 
     # Arrêter et supprimer les conteneurs associés à docker-compose.pipeline.yaml
     docker compose -f docker-compose.pipeline.yaml --env-file .env down
+
+    docker network create "shared-network" || true
 
     # Relancer et reconstruire les services pour le développement
     docker compose -f docker-compose.pipeline.yaml --env-file .env up -d --build

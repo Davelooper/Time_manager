@@ -9,7 +9,7 @@ config :backend, Backend.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-# For development, we disable any cache and enable
+# For development, we disable any cache and enabl
 # debugging and code reloading.
 #
 # The watchers configuration can be used to run external
