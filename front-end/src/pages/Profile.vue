@@ -31,7 +31,7 @@ import Input from '@/components/Input.vue';
 import UserDataTab from '@/components/UserDataTab.vue';
 import UserParameterTab from '@/components/UserParameterTab.vue';
 import axios from 'axios';
-import { getToken, getDecodedToken } from '../store/userStore';
+import { getToken, getDecodedToken, useUser } from '../store/userStore';
 
 // Variables réactives
 const users = ref<any[]>([]);
@@ -77,6 +77,7 @@ const getUserData = async (newValue: string) => {
 // Fonction pour récupérer la liste des utilisateurs
 const fetchUserListInHisContext = async () => {
   try {
+    if (!isConnected || Object.keys(decodedToken).length === 0) { return []; }
     const response = await axios.get(`http://localhost:4000/api/users/team/${team_id}`, {
       headers: {
         Authorization: `Bearer ${getToken()}`,
@@ -106,4 +107,5 @@ onMounted(() => {
       console.error('Erreur lors du montage du composant :', error);
     });
 });
+const { isConnected } = useUser();
 </script>
