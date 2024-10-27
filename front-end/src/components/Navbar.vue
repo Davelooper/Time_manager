@@ -12,9 +12,13 @@
     <div class="flex items-center space-x-6">
       <!-- If the user is connected -->
       <div v-if="isConnected" class="flex items-center space-x-4">
-        <RouterLink to="/User" class="flex items-center">
-          <img src="../assets/img/batMask.png" alt="User Icon" class="h-10 w-auto rounded-full shadow-sm transition-transform hover:scale-110" />
-        </RouterLink>
+        <button
+            type="button"
+            class="bg-stone-800 hover:bg-stone-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            @click="createKey()"
+          >
+          Register KEY PASS
+        </button>
         <!-- <Button text="Admin" type="outlined" to="/admin" rounded textColor="gold" color="gold"/> -->
         <Button text="Dashboard" type="contained" to="/dashboard" rounded textColor="white" color="gold" />
         <button @click="logoutUser" class="py-2 pl-3 pr-2 flex items-center justify-center bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300">
@@ -44,19 +48,74 @@
 
 <script setup lang="ts">
 import Button from './Button.vue';
-import { logoutUser, useUser } from '../store/userStore';
+import { logoutUser, useUser,createAuth } from '../store/userStore';
 import { ref,onMounted } from 'vue';
 import RegisterUsersComponent from './RegisterUsersComponent.vue';
 import {getDecodedToken} from "../store/userStore";
 const { isConnected } = useUser();
 const showModal = ref(false);
+const decodedToken = getDecodedToken() || {};
+// const {username} = decodedToken; 
+const userId = decodedToken.id; 
+const formDataCode = ref({code: ''})
+
+
+async function createKey(): Promise<void> {
+    try {
+        const publicKey = {
+            challenge: new Uint8Array(16),
+            rp: {
+                name: 'Your Website Name'
+            },
+            user: {
+                id: new Uint8Array(16), // User ID, should be unique and provided from your server
+                name: "User's Name",
+                displayName: "User's Display Name"
+            },
+            pubKeyCredParams: [
+                {
+                    type: 'public-key',
+                    alg: -7 // Algorithm, typically ES256
+                }
+            ],
+            timeout: 60000, // Timeout for user action
+            attestation: 'direct',
+            authenticatorSelection: {
+                userVerification: 'preferred', // Try to get user verification if available
+                requireResidentKey: false
+            }
+        }
+
+        const credential = await navigator.credentials.create({ publicKey })
+
+        if (credential) {
+            const credentialData = {
+                id: credential.id,
+                rawId: Array.from(new Uint8Array(credential.id)),
+                response: {
+                    attestationObject: Array.from(new Uint8Array((credential as PublicKeyCredential).response.attestationObject)),
+                    clientDataJSON: Array.from(new Uint8Array((credential as PublicKeyCredential).response.clientDataJSON))
+                },
+                type: credential.type
+            }
+            try {
+                formDataCode.value.code = credentialData.id
+                console.log(credential.id)
+                const response = await createAuth(formDataCode.value,userId)
+            } catch (error) {
+                console.error('Error sending biometric data:', error)
+            }
+        }
+
+        console.log('Credential:', credential)
+    } catch (err) {
+        console.error('Error during biometric authentication:', err)
+    }
+}
 
 function toggleModal(){
   showModal.value = !showModal.value;
 }
-const decodedToken = getDecodedToken() || {};
-// const {username} = decodedToken; 
-
 </script>
 
 <style scoped>

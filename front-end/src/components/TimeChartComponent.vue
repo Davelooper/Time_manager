@@ -526,8 +526,8 @@ async function updateChartDataByDay(iduser: string, idteam: string) {
 
     // Prepare total hours for the chart
     const totalHours = [
-      clocksData, // Total hours from clocks
-      workingTimeData // Total hours from working time
+      clocksData,
+      workingTimeData 
     ];
 
     // Update the chart data
