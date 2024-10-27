@@ -26,6 +26,8 @@ if [ "$SERVICE_ENV" = "PROD" ]; then
   # Nettoyage pour l'environnement de production
   cleanup "docker-compose.prod.yaml"
 
+  docker network create "shared-network"
+  
   # Relancer et reconstruire les services pour la production
   echo "Redémarrage des services en production..."
   docker compose -f docker-compose.prod.yaml --env-file .env up -d
@@ -35,6 +37,8 @@ else
 
   # Nettoyage pour l'environnement de développement
   cleanup "docker-compose.dev.yaml"
+
+  docker network create "shared-network"
 
   # Relancer et reconstruire les services pour le développement
   echo "Redémarrage des services en développement..."

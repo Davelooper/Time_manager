@@ -16,11 +16,11 @@ echo "POSTGRES_DB: $POSTGRES_DB"
 echo "Utilisateur actuel : $(whoami)"
 ls -l ./config
 
-# Recuperer les dependances
+# Recuperer les dependances 
 mix deps.get
 
 # Attendre que PostgreSQL soit prêt
-echo "Vérification si Postgres accepte les connexions sur $POSTGRES_HOST:5432"
+echo "Vérification si Postgres accepte les connexions sur $POSTGRES_HOST"
 until pg_isready -q -h "$POSTGRES_HOST" -p 5432 -U "$POSTGRES_USER"; do
   echo "$(date) - en attente de la base de données"
   sleep 2
