@@ -35,8 +35,8 @@ import { getToken, getDecodedToken } from '../store/userStore';
 
 // Variables réactives
 const users = ref<any[]>([]);
-const decodedToken = getDecodedToken();
-const { username, email, role, team_id, id } = decodedToken;
+const decodedToken = getDecodedToken() || {};
+const { username, email, role, team_id, id } = decodedToken || {};
 
 // Assurer que 'selectedId' est une chaîne de caractères
 const selectedId = ref<string>(String(id));

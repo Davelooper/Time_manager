@@ -5,7 +5,7 @@
        <RouterLink to="/home" class="flex items-center">
         <img src="@/assets/timemanager.png" alt="TimeManager Logo" class="h-10 w-auto transition-transform duration-300 hover:scale-105 filter invert" />
        </RouterLink> 
-       <p v-if="isConnected" class="text-white hidden md:block">Welcome, {{username}}</p>
+       <p v-if="isConnected" class="text-white hidden md:block">Welcome {{username}}</p>
      </div>
 
     <!-- Navigation links -->
@@ -54,8 +54,8 @@ const showModal = ref(false);
 function toggleModal(){
   showModal.value = !showModal.value;
 }
-const decodedToken = getDecodedToken();
-const {username} = decodedToken; 
+const decodedToken = getDecodedToken() || {};
+// const {username} = decodedToken; 
 
 </script>
 
