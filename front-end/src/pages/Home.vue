@@ -18,9 +18,9 @@
 </template>
 <script setup lang="ts">
 	import Navbar from "../components/Navbar.vue"
-  import PromoteUserComponent from "@/components/PromoteUserComponent.vue";
-  // import TimeChart from "../components/TimeChartComponent.vue"
 import SpecCard from "@/components/SpecCard.vue";
+
+
 </script>
 <style>
 </style>

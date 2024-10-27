@@ -50,7 +50,7 @@
       <!-- Spinner qui s'affiche pendant le chargement -->
       <svg
         v-if="isLoading"
-        class="animate-spin h-5 w-5 mr-3 text-white"
+        class="animate-spin h-5 w-5 text-white"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -110,7 +110,7 @@ export default {
       type: String,
       required: false,
     },
-    asyncAction: {
+    onClick: {
       type: Function,
       required: false,
     },
@@ -162,10 +162,10 @@ export default {
       if (this.isLoading) return;
 
       // Si une action async est définie
-      if (this.asyncAction) {
+      if (this.onClick) {
         this.isLoading = true; // Activer le spinner
         try {
-          await this.asyncAction(); // Exécuter l'action asynchrone
+          await this.onClick(); // Exécuter l'action asynchrone
         } catch (error) {
           console.error("Erreur pendant l'action async : ", error);
         } finally {

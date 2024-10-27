@@ -110,19 +110,58 @@ Enum.each(teams, fn team ->
     end)
   end)
 
-    working_times = [
-      %WorkingTime{
-        start: ~U[2024-10-08 09:00:00Z],
-        end: ~U[2024-10-08 17:00:00Z],
-        team_id: team.id
-      },
-      %WorkingTime{
-        start: ~U[2024-10-09 09:00:00Z],
-        end: ~U[2024-10-09 17:00:00Z],
-        team_id: team.id
-      }
-    ]
-
+  working_times = [
+    %WorkingTime{
+      start: ~U[2024-10-08 09:00:00Z],
+      end: ~U[2024-10-08 17:00:00Z],
+      team_id: team.id
+    },
+    %WorkingTime{
+      start: ~U[2024-10-09 09:00:00Z],
+      end: ~U[2024-10-09 17:00:00Z],
+      team_id: team.id
+    },
+    %WorkingTime{
+      start: ~U[2024-10-10 09:00:00Z],
+      end: ~U[2024-10-10 17:00:00Z],
+      team_id: team.id
+    },
+    %WorkingTime{
+      start: ~U[2024-10-11 09:00:00Z],
+      end: ~U[2024-10-11 17:00:00Z],
+      team_id: team.id
+    },
+    %WorkingTime{
+      start: ~U[2024-10-12 09:00:00Z],
+      end: ~U[2024-10-12 17:00:00Z],
+      team_id: team.id
+    },
+    %WorkingTime{
+      start: ~U[2024-10-15 09:00:00Z],
+      end: ~U[2024-10-15 17:00:00Z],
+      team_id: team.id
+    },
+    %WorkingTime{
+      start: ~U[2024-10-16 09:00:00Z],
+      end: ~U[2024-10-16 17:00:00Z],
+      team_id: team.id
+    },
+    %WorkingTime{
+      start: ~U[2024-10-17 09:00:00Z],
+      end: ~U[2024-10-17 17:00:00Z],
+      team_id: team.id
+    },
+    %WorkingTime{
+      start: ~U[2024-10-18 09:00:00Z],
+      end: ~U[2024-10-18 17:00:00Z],
+      team_id: team.id
+    },
+    %WorkingTime{
+      start: ~U[2024-10-19 09:00:00Z],
+      end: ~U[2024-10-19 17:00:00Z],
+      team_id: team.id
+    }
+  ]
       Enum.each(working_times, fn working_time ->
         Repo.insert!(working_time)
       end)

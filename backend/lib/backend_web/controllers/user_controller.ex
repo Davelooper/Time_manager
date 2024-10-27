@@ -8,7 +8,15 @@ defmodule BackendWeb.UserController do
 
   plug(
     BackendWeb.Plugs.AuthPlug
-    when action in [:show, :create, :index, :update, :delete, :get_by_user_id, :get_all_by_team_id]
+    when action in [
+           :show,
+           :create,
+           :index,
+           :update,
+           :delete,
+           :get_by_user_id,
+           :get_all_by_team_id
+         ]
   )
 
   plug(
@@ -66,7 +74,7 @@ defmodule BackendWeb.UserController do
   def update(conn, %{"userId" => id, "user" => user_params}) do
     user = Accounts.get_user!(id)
 
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+    with {:ok, %User{} = user} <- Accounts.update_usertwo(user, user_params) do
       render(conn, :show, user: user)
     end
   end
@@ -114,5 +122,4 @@ defmodule BackendWeb.UserController do
     users = Accounts.get_all_by_team_id(teamId)
     render(conn, "index.json", users: users)
   end
-
 end

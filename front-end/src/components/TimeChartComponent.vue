@@ -1,27 +1,17 @@
 <template>
   <div class="border-gray-200 rounded-lg text-center shadow p-5 dark:border-gray-700">
     <ul class="flex border-b text-center">
-      <li
-        @click="activeTab = 1"
-        class="cursor-pointer py-2 px-4 text-gray-600 dark:text-gray-400 border-b-2"
-        :class="activeTab === 1 ? 'border-blue-500 text-blue-500' : 'border-transparent'"
-      >
+      <li @click="activeTab = 1" class="cursor-pointer py-2 px-4 text-gray-600 dark:text-gray-400 border-b-2"
+        :class="activeTab === 1 ? 'border-blue-500 text-blue-500' : 'border-transparent'">
         Monthly
       </li>
-      <li
-        @click="activeTab = 2"
-        class="cursor-pointer py-2 px-4 text-gray-600 dark:text-gray-400 border-b-2"
-        :class="activeTab === 2 ? 'border-blue-500 text-blue-500' : 'border-transparent'"
-      >
+      <li @click="activeTab = 2" class="cursor-pointer py-2 px-4 text-gray-600 dark:text-gray-400 border-b-2"
+        :class="activeTab === 2 ? 'border-blue-500 text-blue-500' : 'border-transparent'">
         Weekly
       </li>
-    <button @click="fetchClocks(userId)"
-    class="text-blue-800"
-    > TEST CLOCKS </button>
-    <button @click="fetchWorkingTime()"
-    class="text-blue-800"
-    > TEST workingTime </button>
-      
+      <button @click="fetchClocks(userId)" class="text-blue-800"> TEST CLOCKS </button>
+      <button @click="fetchWorkingTime(teamId)" class="text-blue-800"> TEST workingTime </button>
+
     </ul>
     <div class="p-4 flex flex-row justify-center">
       <div class="size-96" v-if="activeTab === 1">
@@ -38,45 +28,181 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Bar, Line, Pie } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, LineElement, ArcElement, CategoryScale, LinearScale } from 'chart.js';
 import type { ChartOptions, ChartData } from 'chart.js';
-import {getClocksByUserId} from '../store/clocksStore';
-import {getDecodedToken} from '../store/userStore';
-import {getAllWorkingTimeByUser} from '../store/workingTimeStore';
-
-const decodedToken = getDecodedToken(); 
-    const userId = decodedToken.id; 
-    const teamId = decodedToken.team_id
-
-function fetchClocks(iduser: string){
- let getAllClocksUser = getClocksByUserId(iduser)
- console.log(getAllClocksUser)
+import { getClocksByUserId } from '../store/clocksStore';
+import { getDecodedToken } from '../store/userStore';
+import { getAllWorkingTimeByUser } from '../store/workingTimeStore';
+interface HoursWorkedPerDay {
+  Monday: number;
+  Tuesday: number;
+  Wednesday: number;
+  Thursday: number;
+  Friday: number;
+  Saturday: number;
+  Sunday: number;
 }
 
-function fetchWorkingTime(){
-let getAllWorkingTimeByTeams = getAllWorkingTimeByUser(teamId)
-console.log(getAllWorkingTimeByTeams)
+
+const decodedToken = getDecodedToken();
+const userId = decodedToken.id;
+const teamId = decodedToken.team_id
+
+async function fetchClocks(iduser: string) {
+  try {
+    const response = await getClocksByUserId(iduser);
+    console.log('Response from getClocksByUserId:', response);
+    if (!Array.isArray(response.data)) {
+      throw new Error("La réponse n'est pas un tableau.");
+    }
+
+    const clocks = response.data;
+
+    const hoursWorkedByDayClocks: { [key: string]: number } = {
+      Monday: 0,
+      Tuesday: 0,
+      Wednesday: 0,
+      Thursday: 0,
+      Friday: 0,
+      Saturday: 0,
+      Sunday: 0,
+    };
+
+    // Stocker temporairement les pointages pour traiter les paires (entrée/sortie)
+    let dailyClocks: { [key: string]: string[] } = {};
+
+    // Organiser les clocks par jour
+    clocks.forEach((entry: { time: string }) => {
+      const day = new Date(entry.time).toLocaleDateString('en-US', { weekday: 'long' });
+      if (!dailyClocks[day]) {
+        dailyClocks[day] = [];
+      }
+      dailyClocks[day].push(entry.time);
+    });
+
+    // Calculer les heures travaillées par jour (paire entrée/sortie)
+    Object.keys(dailyClocks).forEach(day => {
+      const times = dailyClocks[day];
+      if (times.length >= 2) {
+        const startTime = new Date(times[0]);
+        const endTime = new Date(times[1]);
+        const hoursWorked = calculateWorkingHours(startTime.toISOString(), endTime.toISOString());
+
+        hoursWorkedByDayClocks[day] += hoursWorked;
+      }
+    });
+
+    return hoursWorkedByDayClocks; // Assurez-vous de retourner les heures travaillées par jour
+  } catch (error) {
+    console.error('Erreur lors de la récupération des heures de travail:', error);
+    // Retourner un objet vide ou une structure par défaut si l'erreur se produit
+    return {
+      Monday: 0,
+      Tuesday: 0,
+      Wednesday: 0,
+      Thursday: 0,
+      Friday: 0,
+      Saturday: 0,
+      Sunday: 0,
+    };
+  }
+}
+async function fetchWorkingTime(idteam: string): Promise<HoursWorkedPerDay> {
+  try {
+    const response = await getAllWorkingTimeByUser(idteam);
+
+    if (!response || !response.data) {
+      throw new Error("Aucune donnée disponible.");
+    }
+
+    const workingTimes = response.data;
+
+    // Calculer les heures travaillées par jour
+    const hoursWorkedPerDay: HoursWorkedPerDay = {
+      Monday: 0,
+      Tuesday: 0,
+      Wednesday: 0,
+      Thursday: 0,
+      Friday: 0,
+      Saturday: 0,
+      Sunday: 0,
+    };
+
+    workingTimes.forEach((entry: { start: string; end: string }) => {
+      const dayOfWeek = new Date(entry.start).toLocaleDateString('en-US', { weekday: 'long' });
+      const hoursWorked = calculateWorkingHours(entry.start, entry.end);
+
+      if (hoursWorkedPerDay[dayOfWeek] !== undefined) {
+        hoursWorkedPerDay[dayOfWeek] = hoursWorked;
+      }
+    });
+
+    return hoursWorkedPerDay; // Retourne un objet contenant les jours de la semaine
+  } catch (error) {
+    console.error('Erreur lors de la récupération des heures travaillées:', error);
+    throw error;
+  }
 }
 
+function calculateWorkingTimeByWeek(workingTimes: { start: string; end: string }[]): number[] {
+    const hoursPerWeek = [0, 0, 0, 0]; // Pour stocker les heures par semaine
+
+    workingTimes.forEach(({ start, end }) => {
+        const date = new Date(start);
+        const week = Math.floor((date.getDate() - 1) / 7); // Calcul de la semaine (0 à 3)
+        const hoursWorked = calculateWorkingHours(start, end);
+        
+        hoursPerWeek[week] += hoursWorked;
+    });
+
+    return hoursPerWeek; // Retourne les heures pour chaque semaine
+}
+
+function calculateWorkingHours(start: string, end: string): number {
+  const startTime = new Date(start);
+  const endTime = new Date(end);
+  const hours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+  return hours;
+}
 ChartJS.register(Title, Tooltip, Legend, BarElement, LineElement, ArcElement, CategoryScale, LinearScale);
 
 const activeTab = ref(1);
-
-// Données pour le graphique "Pie" (Mensuel)
 const chartDataMonth: ChartData<'pie'> = {
   labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
   datasets: [
     {
-      label: 'heures travaillées',
+      label: 'Clock months',
       backgroundColor: ['#ff9523', '#ffe177', '#ff7795', '#161616'],
-      data: [30, 45, 40, 35],
+      data: [0, 0, 0, 0],
+    },
+    {
+      label: 'working hours',
+      backgroundColor: ['#ff9523', '#ffe177', '#ff7795', '#161616'],
+      data: [0, 0, 0, 0],
     },
   ],
 };
 
-// Données pour le graphique "Line" (Journalier)
+
+const chartDataWeek = ref<ChartData<'bar'>>({
+  labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+  datasets: [
+    {
+      label: 'Clocks Working Hours',
+      backgroundColor: '#41B883',
+      data: [0, 0, 0, 0, 0, 0, 0],
+    },
+    {
+      label: 'Working Time',
+      backgroundColor: '#E46651',
+      data: [0, 0, 0, 0, 0, 0, 0],
+    },
+  ],
+});
+
+
 const chartDataHours: ChartData<'line'> = {
   labels: ['00 AM', '01 AM', '02 AM', '03 AM', '04 AM', '05 AM', '06 AM', '07 AM', '08 AM', '09 AM', '10 AM', '11 AM', '12 AM', '00 PM', '01 PM', '02 PM', '03 PM', '04 PM', '05 PM', '06 PM', '07 PM', '08 PM', '09 PM', '10 PM', '11 PM', '12 PM'],
   datasets: [
@@ -91,24 +217,6 @@ const chartDataHours: ChartData<'line'> = {
   ],
 };
 
-// Données pour le graphique "Bar" (Hebdomadaire)
-const chartDataWeek: ChartData<'bar'> = {
-  labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-  datasets: [
-    {
-      label: 'Heures travaillées',
-      backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-      data: [8, 7.5, 8.5, 9, 7, 4, 0],
-    },
-    {
-      label: 'Objectif (heures)',
-      backgroundColor: '#ef4444',
-      data: [8, 8, 8, 8, 8, 8, 0],
-    },
-  ],
-};
-
-// Options spécifiques pour le graphique "Bar"
 const barChartOptions: ChartOptions<'bar'> = {
   responsive: true,
   plugins: {
@@ -133,7 +241,6 @@ const barChartOptions: ChartOptions<'bar'> = {
   },
 };
 
-// Options spécifiques pour le graphique "Pie"
 const pieChartOptions: ChartOptions<'pie'> = {
   responsive: true,
   plugins: {
@@ -146,7 +253,6 @@ const pieChartOptions: ChartOptions<'pie'> = {
   },
 };
 
-// Options spécifiques pour le graphique "Line"
 const lineChartOptions: ChartOptions<'line'> = {
   responsive: true,
   plugins: {
@@ -170,6 +276,97 @@ const lineChartOptions: ChartOptions<'line'> = {
     },
   },
 };
+
+async function updateChartData(iduser: string, idteam: string) {
+  try {
+    // Fetch clocks and working time data
+    const clocksData = await fetchClocks(iduser);
+    const workingTimeData = await fetchWorkingTime(idteam);
+
+    // Debug: Affiche les données pour vérifier leur contenu
+    console.log('Clocks Data:', clocksData);  // Vérifier le format des clocks
+    console.log('Working Time Data:', workingTimeData);  // Vérifier le format des working times
+
+    // Update the chart's dataset with the individual data for clocks and workingTime
+    chartDataWeek.value.datasets[0].data = [
+      clocksData.Monday || 0,
+      clocksData.Tuesday || 0,
+      clocksData.Wednesday || 0,
+      clocksData.Thursday || 0,
+      clocksData.Friday || 0,
+      clocksData.Saturday || 0,
+      clocksData.Sunday || 0,
+    ];
+
+    chartDataWeek.value.datasets[1].data = [
+      workingTimeData.Monday || 0,
+      workingTimeData.Tuesday || 0,
+      workingTimeData.Wednesday || 0,
+      workingTimeData.Thursday || 0,
+      workingTimeData.Friday || 0,
+      workingTimeData.Saturday || 0,
+      workingTimeData.Sunday || 0,
+    ];
+
+    console.log('Chart data updated:', chartDataWeek.value);
+  } catch (error) {
+    console.error('Error updating chart data:', error);
+  }
+}
+
+async function updateChartDataByMonth(iduser: string, idteam: string) {
+  try {
+    // Récupérer les données de pointage (clocks) et de temps de travail (workingTime)
+    const clocksData = await fetchClocks(iduser);
+    const workingTimeData = await fetchWorkingTime(idteam);
+
+    // Définir un tableau pour stocker les heures travaillées et les heures de travail par semaine
+    const hoursWorkedPerWeek = [0, 0, 0, 0]; // Heures travaillées par semaine
+    const workingHoursPerWeek = [0, 0, 0, 0]; // Heures de travail par semaine
+
+    // Logique pour distribuer les heures travaillées par semaine
+    Object.entries(clocksData).forEach(([day, hoursWorked]) => {
+      const weekIndex = getWeekIndexFromDay(day);
+      if (weekIndex >= 0) {
+        hoursWorkedPerWeek[weekIndex] += hoursWorked; // Ajoute les heures travaillées
+      }
+    });
+
+    Object.entries(workingTimeData).forEach(([day, hours]) => {
+      const weekIndex = getWeekIndexFromDay(day);
+      if (weekIndex >= 0) {
+        workingHoursPerWeek[weekIndex] += hours; // Ajoute les heures de travail
+      }
+    });
+
+    // Mettre à jour le graphique avec les heures travaillées et les heures de travail par semaine
+    chartDataMonth.datasets[0].data = hoursWorkedPerWeek;  // Heures travaillées
+    chartDataMonth.datasets[1].data = workingHoursPerWeek; // Heures de travail
+
+    console.log('Monthly chart data updated:', chartDataMonth);
+  } catch (error) {
+    console.error('Error updating monthly chart data:', error);
+  }
+}
+
+
+function getWeekIndexFromDay(day: string): number {
+  const weekMap: { [key: string]: number } = {
+    Monday: 0,
+    Tuesday: 0,
+    Wednesday: 0,
+    Thursday: 0,
+    Friday: 0,
+    Saturday: 1,
+    Sunday: 1,
+  };
+  return weekMap[day] !== undefined ? weekMap[day] : -1; // Renvoie -1 si le jour n'est pas trouvé
+}
+
+onMounted(() => {
+  updateChartData(userId, teamId);
+  updateChartDataByMonth(userId,teamId)
+});
 </script>
 
 <style scoped>
