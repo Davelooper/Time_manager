@@ -39,7 +39,6 @@ defmodule Backend.MixProject do
       {:phoenix, "~> 1.7.14"},
       {:joken, "~> 2.6.2"},
       {:phoenix_ecto, "~> 4.5"},
-      {:xmerl, "~> 1.3"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
