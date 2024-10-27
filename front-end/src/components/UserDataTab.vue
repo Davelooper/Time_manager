@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="flex flex-col md:flex-row justify-center gap-6">
-      <DaysJsComponent />  
+      <TimeChartComponent />  
     </div>
   </div>
 </template>
